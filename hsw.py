@@ -3,8 +3,11 @@
 import fileinput
 import uncurl
 import curlify
+import sys
+import copy
 
 from requests import Request, Session, structures
+from loguru import logger as log
 
 
 # read curl commands form stdin
@@ -26,71 +29,107 @@ from requests import Request, Session, structures
 # remove referrer?
 
 
-def send(s, seq):
-    #print("header count: ", len(context.headers))
-    #print("text len: ", len(resp.text))
-    #print(resp.status_code)
+def send(seq):
+    # print(seq.headers)
     resp = s.send(seq)
+    # log.info(
+    #    f"headers: {len(seq.headers)}, reply len: {len(resp.text)} status {resp.status_code}"
+    # )
     return resp.status_code, len(resp.text)
 
 
-def process(line):
-    print(line)
-    curl_in = uncurl.parse(line)
-    print(curl_in)
+def parse(line):
+    log.info(f"Processing line {line}")
     context = uncurl.parse_context(line)
-    print(context)
-    #print(dir(context))
-
     ## uncurl doesn't guarantee an url scheme while curlify insists on having one
     if not context.url.startswith("http"):
-        #context.url = "http://" + context.url ## context is RO...
-        context = context._replace(url="http://"+context.url)
+        # context.url = "http://" + context.url ## context is RO...
+        context = context._replace(url="http://" + context.url)
+    req = Request(
+        context.method.upper(), context.url, headers=context.headers, data=context.data
+    )
+    return req
 
-    essential_headers = []
 
+def is_same_without(prep, without):
+    # print(dir(prep.headers))
+    one_less = copy.deepcopy(prep)
+    del one_less.headers[without]
+
+    new_status, new_len = send(one_less)
+    # print(prep.headers)
+    if new_status == new_status and new_len == full_len:
+        return False
+    return True
+
+
+def triage(prep_full, full_status_code, full_len):
+    header_count = len(prep_full.headers)
+    if len(prep_full.headers) == 1:
+        return prep_full
+
+    log.info(f"Starting triage with: {header_count} headers")
+    # for h in range(0, header_count):
+
+    obsolete_headers = structures.CaseInsensitiveDict()
+    needed_headers = structures.CaseInsensitiveDict()
+    for k, v in prep_full.headers.items():
+        if is_same_without(prep_full, k):
+            log.info(f"Found needed headder: {k, v}")
+            needed_headers[k] = v
+        else:
+            log.info(f"Found obsolete headder: {k, v}")
+            obsolete_headers[k] = v
+            # del header
+
+    import pprint
+
+    log.debug(f"Needed:")
+    pprint.pprint(dict(needed_headers), width=9999, indent=4)
+
+    log.debug(f"Obsolete:")
+    pprint.pprint(dict(obsolete_headers), width=-1, indent=4)
+
+    prep_full.headers = needed_headers
+    return prep_full
+
+
+def process(line):
+    req = parse(line)
+    global s
+    global full_status
+    global full_len
     s = Session()
-
-    req_full = Request(context.method.upper(), context.url, headers=context.headers, data=context.data)
-
-    prep_full = req_full.prepare()
-    prep_plain = prep_full
-    #print(dir(prep_full))
-    #print(type(prep_full.headers))
-    #prep_plain.headers = {}
+    prep_full = req.prepare()
+    prep_plain = copy.deepcopy(prep_full)
     prep_plain.headers = structures.CaseInsensitiveDict()
 
-    #req_plain = Request(context.method.upper(), context.url, data=context.data)
-
-
-    full_status_code, full_resp_text = send(s, prep_full)
-    plain_status_code, plain_resp_text = send(s, prep_plain)
-
-    print("full_status_code", full_status_code)
-    print("full_resp_text", full_resp_text)
-    print("plain_status_code", plain_status_code)
-    print("plain_resp_text", plain_resp_text)
+    log.info("Probing full request")
+    full_status_code, full_len = send(prep_full)
+    log.info("Probing plain request")
+    plain_status_code, plain_len = send(prep_plain)
 
     if not full_status_code == 200:
-        ## this is not good ..
-        raise("Aborting: Original query not returning http 200 > "+full_status_code)
+        log.error("Aborting: Original query not of status 200: " + full_status_code)
+        #### must thest if this end the program
+        #### if not do so
+        #### sys.exit()
 
-    if plain_status_code == full_status_code and full_resp_text == plain_resp_text:
-        ## nice, no headders needed ...
+    elif plain_status_code == full_status_code and full_len == plain_len:
+        log.info("Done. Headers have no effect", dir(prep_plain))
         return prep_plain
-        print("XXXXXXXXXXXXx",dir(prep_plain))
 
     else:
-        # bla bla bla this is not done ..
-        print("NOOOOOOOOOOO")
-        import sys
-        sys.exit()
+        log.info("Some Headders needed. Starting search")
+        prep_minimum = triage(prep_full, full_status_code, full_len)
+        return prep_minimum
 
 
-for line in fileinput.input():
-    request_obj =  process(line)
-    print(curlify.to_curl(request_obj))
-    #try:
-    #    process(line)
-    #except:
-    #    print("line failed: ", line)
+if __name__ == "__main__":
+    for line in fileinput.input():
+        request_obj = process(line)
+        print(curlify.to_curl(request_obj))
+        # try:
+        #    process(line)
+        # except:
+        #    print("line failed: ", line)
