@@ -104,7 +104,6 @@ def condense(prep_full, full_status_code, full_len):
 def process(line):
     req = parse(line)
     global session
-
     #global full_status
     #global full_len
 

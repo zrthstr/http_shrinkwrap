@@ -17,7 +17,7 @@ curl "${HOST}:${1}" \
   -H 'sec-gpc: 1' \
   --compressed
 EOF
-) | ./hsw.py
+) | ../hsw.py
 }
 
 # heise
@@ -39,7 +39,7 @@ curl 'https://ipinfo.io/' \
   -H 'sec-gpc: 1' \
   --compressed
 EOF
-) | ./hsw.py
+) | ../hsw.py
 }
 
 
