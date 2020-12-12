@@ -30,7 +30,7 @@ EOF
 ) | ../hsw.py
 }
 
-# heise
+heise
 
 function ipinfo {
 	(
