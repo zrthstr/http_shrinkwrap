@@ -36,6 +36,7 @@ Note:
 
 ### usecase with fc & vi
 given `export EDITOR="vim"`
+
 in Chrome/Mozilla dev tools > "copy request as curl" > paste and execute curl command in terminal
 then run `fc` > now inside vim run `:%! ./hsw.py` ; then save output if needed `:w outfile_name`
 
