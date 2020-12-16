@@ -3,6 +3,7 @@
 import sys
 import os
 import copy
+import hashlib
 #import pprint
 import fileinput
 import uncurl
@@ -29,7 +30,7 @@ def send(seq, log_msg="headers"):
     log.trace(
         f"{log_msg}: {len(seq.headers)}, reply len: {len(resp.text)} status {resp.status_code}"
     )
-    return resp.status_code, len(resp.text)
+    return resp.status_code, len(resp.text), hashlib.sha256(resp.text.encode('utf-8')).hexdigest()
 
 
 def parse(line):
@@ -44,19 +45,20 @@ def parse(line):
     return req
 
 
-def is_same_without(prep, without, full_status_code, full_len):
+def is_same_without(prep, without, full_status_code, full_len, full_hash):
     # print(dir(prep.headers))
     one_less = copy.deepcopy(prep)
     del one_less.headers[without]
 
-    new_status, new_len = send(one_less)
+    new_status, new_len, new_hash = send(one_less)
     # print(prep.headers)
-    if new_status == full_status_code and new_len == full_len:
+    #if new_status == full_status_code and new_len == full_len:
+    if new_status == full_status_code and new_hash == full_hash:
         return False
     return True
 
 
-def triage(prep_full, full_status_code, full_len):
+def triage(prep_full, full_status_code, full_len, full_hash):
 #def triage(prep_full, _ , full_len):
     header_count = len(prep_full.headers)
     if len(prep_full.headers) == 1:
@@ -68,7 +70,7 @@ def triage(prep_full, full_status_code, full_len):
     obsolete_headers = structures.CaseInsensitiveDict()
     needed_headers = structures.CaseInsensitiveDict()
     for headder_name, headder_value in prep_full.headers.items():
-        if is_same_without(prep_full, headder_name, full_status_code, full_len):
+        if is_same_without(prep_full, headder_name, full_status_code, full_len, full_hash):
             log.debug(f"Found needed headder: {headder_name, headder_value}")
             needed_headers[headder_name] = headder_value
         else:
@@ -82,7 +84,7 @@ def triage(prep_full, full_status_code, full_len):
     prep_full.headers = needed_headers
     return prep_full
 
-def condense(prep_full, full_status_code, full_len):
+def condense(prep_full, full_status_code, full_len, full_hash):
     max_user_agent_len = 15
     org_user_agent = prep_full.headers["user-agent"]
     log.debug(f'condensing User-Agent: {org_user_agent}')
@@ -95,8 +97,9 @@ def condense(prep_full, full_status_code, full_len):
         return prep_full
 
     # make sure condensing has no effect
-    new_status, new_len = send(prep_full, log_msg="condenseing")
-    if (new_status, new_len) != (full_status_code, full_len):
+    new_status, new_len, new_hash = send(prep_full, log_msg="condenseing")
+    #if (new_status, new_len) != (full_status_code, full_len):
+    if (new_status, new_hash) != (full_status_code, full_hash):
         prep_full.headers["user-agent"] = org_user_agent
     return  prep_full
 
@@ -113,24 +116,28 @@ def process(line):
     prep_plain.headers = structures.CaseInsensitiveDict()
 
     log.debug("Probing full request")
-    full_status_code, full_len = send(prep_full)
+    full_status_code, full_len, full_hash = send(prep_full)
     log.debug("Probing plain request")
-    plain_status_code, plain_len = send(prep_plain)
+    plain_status_code, plain_len, plain_hash = send(prep_plain)
 
     if not full_status_code == 200:
-        log.error(f"Error: supplied curl command not exiting with status 200: {full_status_code}")
+        log.error(f"Supplied curl command not exiting with status 200: {full_status_code}")
         sys.exit()
 
-    if plain_status_code == full_status_code and full_len == plain_len:
+    if full_len == 0:
+        log.warning("Original requests reply has length 0. Continuing")
+
+    #if plain_status_code == full_status_code and full_len == plain_len:
+    if plain_status_code == full_status_code and full_hash == plain_hash:
         log.debug("Done. All headers have no effect")
         return prep_plain
 
     log.debug("Some Headders appear relevant. Starting triage")
-    prep_minimum = triage(prep_full, full_status_code, full_len)
+    prep_minimum = triage(prep_full, full_status_code, full_len, full_hash)
 
 
     if 'user-agent' in prep_minimum.headers:
-        prep_minimum = condense(prep_minimum, full_status_code, full_len)
+        prep_minimum = condense(prep_minimum, full_status_code, full_len, full_hash)
 
     return prep_minimum
 
