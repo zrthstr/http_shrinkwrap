@@ -1,7 +1,24 @@
 # http_shrinkwrap
 shrinks curl http command to minimal form
-* getting rid of all http headers that have no apparent effect
-* shortening cookies and user agent
+* [x] gets rid of all http headers that have no apparent effect
+* [x] shortens user agent
+
+* [ ] use content hash or content instead of size for comaprison
+* [x] gracfully handle empty pages
+* [ ] fix tests
+	* [ ] add vanilla
+	* [x] add test case where some headders ar needed
+	* [ ] add test case where all headders ar needed
+	* [ ] add user agent test cases
+	* [ ] add POST tests
+	* [ ] add redirect tests
+	* [ ] add gravefull handeling for endpoints that never return the same content
+	* [ ] add test for empty response
+	* etc ..
+* [ ] add shorten cookies function
+* [ ] add triage GET parameters function
+* [ ] fix POST data bug
+* [ ] add triage POST parmeters function
 
 ## example
 ### example ipinfo
