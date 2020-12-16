@@ -14,6 +14,10 @@ def info_rsq():
     #print(app.url_map)
     return f"{str(app.url_map)}\n\n{str(request.headers)}\n"
 
+@app.route('/empty')
+def empty_req():
+    return ""
+
 @app.route('/vanilla')
 def vanilla_rsq():
     return "Vanilla\n"
