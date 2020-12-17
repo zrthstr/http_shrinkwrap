@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-from random import random
+from random import randint
 
 
 from flask import Flask, request
@@ -18,13 +18,13 @@ def info_rsq():
 def empty_req():
     return ""
 
-@app.route('/vanilla')
+@app.route('/static')
 def vanilla_rsq():
-    return "Vanilla\n"
+    return "Static\n"
 
 @app.route('/random')
 def random_rsq():
-    return str(random.randint(1E4,int(1E16))) + "\n"
+    return str(randint(1E4,int(1E16))) + "\n"
 
 ### some headers needed
 @app.route('/some')

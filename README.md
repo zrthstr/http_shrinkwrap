@@ -7,12 +7,13 @@ shrinks curl http command to minimal form
 * [x] gracfully handle empty pages
 * [ ] fix tests
 	* [ ] add vanilla
-	* [x] add test case where some headders ar needed
-	* [ ] add test case where all headders ar needed
+	* [x] add test case where some headers are needed
+	* [x] add test case where no headers are needed
 	* [ ] add user agent test cases
 	* [ ] add POST tests
 	* [ ] add redirect tests
-	* [ ] add gravefull handeling for endpoints that never return the same content
+	* [x] add gracefull handeling for endpoints flapping endpoint (that dont return the same content for same requests)
+	* [ ] add similarity check to recognice small time or cdn based diversions
 	* [ ] add test for empty response
 	* etc ..
 * [ ] add shorten cookies function

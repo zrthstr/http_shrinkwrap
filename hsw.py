@@ -86,12 +86,12 @@ def triage(prep_full, full_status_code, full_len, full_hash):
 
 def condense(prep_full, full_status_code, full_len, full_hash):
     max_user_agent_len = 15
-    org_user_agent = prep_full.headers["user-agent"]
+    org_user_agent = prep_full.headers["User-Agent"]
     log.debug(f'condensing User-Agent: {org_user_agent}')
     if " " in org_user_agent.lower():
-        prep_full.headers["user-agent"] = org_user_agent.split()[0]
+        prep_full.headers["User-Agent"] = org_user_agent.split()[0]
     elif len(org_user_agent) > max_user_agent_len:
-        prep_full.headers["user-agent"] = org_user_agent[0:max_user_agent_len]
+        prep_full.headers["User-Agent"] = org_user_agent[0:max_user_agent_len]
     else:
         # no change, no test needed
         return prep_full
@@ -100,7 +100,7 @@ def condense(prep_full, full_status_code, full_len, full_hash):
     new_status, new_len, new_hash = send(prep_full, log_msg="condenseing")
     #if (new_status, new_len) != (full_status_code, full_len):
     if (new_status, new_hash) != (full_status_code, full_hash):
-        prep_full.headers["user-agent"] = org_user_agent
+        prep_full.headers["User-Agent"] = org_user_agent
     return  prep_full
 
 
@@ -115,8 +115,17 @@ def process(line):
     prep_plain = copy.deepcopy(prep_full)
     prep_plain.headers = structures.CaseInsensitiveDict()
 
-    log.debug("Probing full request")
+    log.debug("Probing full request#1")
     full_status_code, full_len, full_hash = send(prep_full)
+
+    log.debug("Probing full request#2 - for flap detection")
+    check_status_code, check_len, check_hash = send(prep_full)
+    if full_status_code == check_status_code and full_hash == check_hash:
+        log.debug("No flapping detected")
+    else:
+        log.error("Aborting. To response to the same queries diverge")
+        sys.exit(3)
+
     log.debug("Probing plain request")
     plain_status_code, plain_len, plain_hash = send(prep_plain)
 
@@ -136,7 +145,7 @@ def process(line):
     prep_minimum = triage(prep_full, full_status_code, full_len, full_hash)
 
 
-    if 'user-agent' in prep_minimum.headers:
+    if 'User-Agent' in prep_minimum.headers:
         prep_minimum = condense(prep_minimum, full_status_code, full_len, full_hash)
 
     return prep_minimum
