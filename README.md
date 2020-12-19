@@ -6,20 +6,24 @@ shrinks curl http command to minimal form
 * [ ] use content hash or content instead of size for comaprison
 * [x] gracfully handle empty pages
 * [ ] fix tests
-	* [ ] add vanilla
+	* [x] add vanilla
 	* [x] add test case where some headers are needed
 	* [x] add test case where no headers are needed
-	* [ ] add user agent test cases
+	* [x] add user agent test cases
+	* [ ] add endpoints that 404
+	* [ ] add endpoint that thimes out
 	* [ ] add POST tests
-	* [ ] add redirect tests
+	* [ ] maybe redirect tests
 	* [x] add gracefull handeling for endpoints flapping endpoint (that dont return the same content for same requests)
-	* [ ] add similarity check to recognice small time or cdn based diversions
+	* [ ] add similarity check to recognice small time (or maybe cdn induced) based diversions
 	* [ ] add test for empty response
 	* etc ..
 * [ ] add shorten cookies function
 * [ ] add triage GET parameters function
 * [ ] fix POST data bug
 * [ ] add triage POST parmeters function
+* [ ] pip this package
+* [ ] add docs
 
 ## example
 ### example ipinfo
@@ -62,3 +66,4 @@ then run `fc` > now inside vim run `:%! ./hsw.py` ; then save output if needed `
 ## install
 tbd
 
+## testing
