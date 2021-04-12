@@ -89,10 +89,10 @@ test_some_post
 
 # okey
 
-#test_useragent
-#test_null
-#test_none
-#test_some
-#test_random
+test_useragent
+test_null
+test_none
+test_some
+test_random
 
 
