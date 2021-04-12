@@ -19,13 +19,33 @@ from loguru import logger as log
 #
 # limitation: only a small subset of curl is supported,
 # the parameters that come from chrome > copy_as_curl...
+#
+# Note:
+# we shall not mess with all headder! Else 'request' will get sad/angry and die!
+# e.g. Content-Length is not optional in POST requests.
+# Removing such results in sadness expressed by a stack trace in requests/adapters.py
 
 
 # what's next?
 #  condense cookies?
 
 
+def eprint(*m):
+    print(*m, file=sys.stderr)
+
+
 def send(seq, log_msg="headers"):
+    eprint("SEQ:")
+    #print(seq.prepare())
+    #print(dir(seq))
+    eprint(seq.body)
+    eprint(type(seq.body))
+    if isinstance(seq.body, str):
+        seq.body = seq.body.encode()
+
+    eprint("XXXx:", seq)
+
+
     resp = session.send(seq)
     log.trace(
         f"{log_msg}: {len(seq.headers)}, reply len: {len(resp.text)} status {resp.status_code}"
@@ -37,6 +57,8 @@ def parse(line):
     #log.info(f"Processing line {line}")
     context = uncurl.parse_context(line)
     ## uncurl doesn't guarantee an url scheme while curlify insists on having one
+
+    ## TODO woudl we need to make https --> https:// ?? or is this implied?
     if not context.url.startswith("http"):
         context = context._replace(url="http://" + context.url)
     req = Request(
@@ -46,7 +68,9 @@ def parse(line):
 
 
 def is_same_without(prep, without, full_status_code, full_len, full_hash):
-    # print(dir(prep.headers))
+    print(dir(prep.headers))
+    eprint("ddddd",without)
+    #sys.exit()
     one_less = copy.deepcopy(prep)
     del one_less.headers[without]
 
@@ -70,6 +94,12 @@ def triage(prep_full, full_status_code, full_len, full_hash):
     obsolete_headers = structures.CaseInsensitiveDict()
     needed_headers = structures.CaseInsensitiveDict()
     for headder_name, headder_value in prep_full.headers.items():
+        print("x" * 20, headder_name)
+        if headder_name == "Content-Length":
+            needed_headers[headder_name] = headder_value
+            continue
+
+
         if is_same_without(prep_full, headder_name, full_status_code, full_len, full_hash):
             log.debug(f"Found needed headder: {headder_name, headder_value}")
             needed_headers[headder_name] = headder_value
@@ -104,27 +134,43 @@ def condense(prep_full, full_status_code, full_len, full_hash):
     return  prep_full
 
 
+def check_flapping(full_status_code, check_status_code, full_hash, check_hash):
+    if full_status_code == check_status_code and full_hash == check_hash:
+        log.debug("No flapping detected")
+    else:
+        log.error("Aborting. Two response to the same queries diverge")
+        sys.exit(3)
+
+
 def process(line):
     req = parse(line)
     global session
-    #global full_status
-    #global full_len
 
     session = Session()
-    prep_full = req.prepare()
+    ### TODO
+    #prep_full = req.prepare()
+    prep_full = session.prepare_request(req)
+
+    ### TODO
+
     prep_plain = copy.deepcopy(prep_full)
     prep_plain.headers = structures.CaseInsensitiveDict()
+
+    ## TODO: verify the logic of this
+    if prep_plain.method == "POST":
+        prep_plain.headers['Content-Length'] = 0
 
     log.debug("Probing full request#1")
     full_status_code, full_len, full_hash = send(prep_full)
 
     log.debug("Probing full request#2 - for flap detection")
     check_status_code, check_len, check_hash = send(prep_full)
-    if full_status_code == check_status_code and full_hash == check_hash:
-        log.debug("No flapping detected")
-    else:
-        log.error("Aborting. To response to the same queries diverge")
-        sys.exit(3)
+
+
+    check_flapping(full_status_code, check_status_code, full_hash, check_hash)
+
+    #if probe_plain_request():
+    #    return prep_plain
 
     log.debug("Probing plain request")
     plain_status_code, plain_len, plain_hash = send(prep_plain)
@@ -154,8 +200,7 @@ def process(line):
 if __name__ == "__main__":
 
     # for fc + vim usecase:
-    # detect if calling process is editor
-    # set non verbose logging then
+    # if calling process is editor, set non verbose logging
 
     if os.readlink("/proc/%s/exe" % os.getppid()).endswith(("/vi", "/vim")):
         for log_level in ["DEBUG", "INFO", "WARN"]:
@@ -164,6 +209,7 @@ if __name__ == "__main__":
     for curl_line in fileinput.input():
         log.debug(f"Processing curl: {curl_line}")
         request_obj = process(curl_line)
+
         print(curlify.to_curl(request_obj))
 
         # try:
