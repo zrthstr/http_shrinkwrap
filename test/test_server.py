@@ -27,7 +27,7 @@ def random_rsq():
     return str(randint(1E4,int(1E16))) + "\n"
 
 ### some headers needed
-@app.route('/some')
+@app.route('/some', methods=['GET', 'POST'])
 def some_headers_need_rsq():
     if 'Needed-0' in request.headers and 'Needed-1' in request.headers:
         if request.headers['Needed-0'] == 'Is-0' and request.headers['Needed-1'] == 'Is-1':
@@ -39,6 +39,30 @@ def some_headers_need_rsq():
 def user_agent_req():
     if 'User-Agent' in request.headers:
         if request.headers['User-Agent'].startswith("Mozilla"):
+            return "OKEY"
+    return "NOPE"
+
+@app.route('/null', methods=['GET', 'POST'])
+def null_req():
+    if 'Needed-0' in request.headers:
+        if request.headers['Needed-0'] == 'Is-0':
+            return ""
+    return "NOPE"
+
+@app.route('/post', methods=['POST'])
+def post_req():
+    print("headers:", request.headers)
+    print("data:", request.data)
+    print("args:", request.args)
+    print("form:", request.form)
+    print("files:", request.files)
+    print("values:", request.values)
+    return "OKEY"
+
+@app.route('/post_some', methods=['POST'])
+def post_some():
+    if "Needed-0" in request.headers:
+        if request.headers["Needed-0"] == "Is-0":
             return "OKEY"
     return "NOPE"
 

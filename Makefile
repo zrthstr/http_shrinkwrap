@@ -1,8 +1,8 @@
 
 
 setup-environ:
-	sudo apt-get install python3 pip
-	sudo pip3 install pipenv
+	#sudo apt-get install python3 pip
+	#sudo pip3 install pipenv
 	pipenv install
 	pipenv shell
 

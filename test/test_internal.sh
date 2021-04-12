@@ -7,6 +7,7 @@ TIMEOUT=12
 
 
 function test_some {
+	### GET request with some needed and some obsolete headers
 	echo "[*] Running test: ${FUNCNAME[0]}"
 	SHOULD="curl -X GET -H 'Needed-0: Is-0' -H 'Needed-1: Is-1' ${HOST}/some"
 	out=$(echo "${SHOULD} -H 'Not-Needed: Something' --compressed" \
@@ -17,6 +18,7 @@ function test_some {
 }
 
 function test_none {
+	### GET request with only obsolete headers
 	echo "[*] Running test: ${FUNCNAME[0]}"
 	SHOULD="curl -X GET ${HOST}/static"
 	out=$(echo "${SHOULD} -H 'Not-Needed-0: Is-0' -H 'Not-Needed-1: Is-1' -H 'Not-Needed-2: Something' --compressed" \
@@ -27,6 +29,7 @@ function test_none {
 }
 
 function test_useragent {
+	### GET request with obsolete User-Agent
 	echo "[*] Running test: ${FUNCNAME[0]}"
 	SHOULD="curl -X GET -H 'User-Agent: Mozilla/5.0' ${HOST}/useragent"
 	out=$(echo "${SHOULD} -H 'User-Agent: Mozilla/5.0 UNNECECARY_UNNECECARY_UNNECECARY_UNNECECARY_UNNECECARY'" \
@@ -37,6 +40,7 @@ function test_useragent {
 }
 
 function test_random {
+	### Non deterministic check that should trigger “Flip Flop Detection”
 	echo "[*] Running test: ${FUNCNAME[0]}"
 	RET_SHOULD="3"
 	echo "curl -X GET -H 'Needed-1: Is-1' -H 'Needed-0: Is-0'  ${HOST}/random" \
@@ -46,6 +50,8 @@ function test_random {
 }
 
 function test_null {
+	### GET request returning empty reply when Needed header is present
+	### else returns "NOPE"
 	echo "[*] Running test: ${FUNCNAME[0]}"
 	SHOULD="curl -X GET -H 'Needed-0: Is-0' ${HOST}/null"
 	out=$(echo "${SHOULD} -H 'User-Agent: NOTNEEDED'" \
@@ -55,11 +61,16 @@ function test_null {
 }
 
 function test_some_post {
+	### GET request with some needed and some obsolete headers
 	echo "[*] Running test: ${FUNCNAME[0]}"
-	SHOULD="curl -X POST --data 'some_data' -H 'Needed-0: Is-0' ${HOST}/null"
-	out=$(echo "${SHOULD} -H 'User-Agent: NOTNEEDED'" \
+	#SHOULD="curl -X POST --data 'some_data' -H 'Needed-0: Is-0' ${HOST}/some"
+	SHOULD="curl -X POST -H 'Content-Length: 9' -H 'Needed-0: Is-0' -H 'Needed-1: Is-1' -d some_data ${HOST}/some"
+	echo "SSSSS" $SHOULD
+	out=$(echo "${SHOULD} -H 'User-Agent: NOTNEEDED' -H 'Foo: foo'" \
 		| ../hsw.py)
-	[[ "${out}" == "${SHOULD}" ]] || (echo "null test failed"; exit 1)
+	echo "out iis:::"
+	echo "$out"
+	[[ "${out}" == "${SHOULD}" ]] || (echo "null post test failed......"; exit 1)
 	echo "[*] Test ${FUNCNAME[0]} passed!"
 }
 
@@ -71,11 +82,17 @@ function start_test_server {
 
 
 start_test_server $TIMEOUT
-test_useragent
-test_null
-test_none
-test_some
+
+## problem ##
 test_some_post
-test_random
+
+
+# okey
+
+#test_useragent
+#test_null
+#test_none
+#test_some
+#test_random
 
 

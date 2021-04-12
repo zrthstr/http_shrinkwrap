@@ -1,18 +1,5 @@
 #!/usr/bin/env python3
 
-import sys
-import os
-import copy
-import hashlib
-#import pprint
-import fileinput
-import uncurl
-import curlify
-
-from requests import Request, Session, structures
-from loguru import logger as log
-
-
 # read curl commands form stdin
 # get rid of all curl paramters that dont seem to make a difference
 # write curl command back to stdout
@@ -25,40 +12,50 @@ from loguru import logger as log
 # e.g. Content-Length is not optional in POST requests.
 # Removing such results in sadness expressed by a stack trace in requests/adapters.py
 
-
 # what's next?
 #  condense cookies?
 
+import os
+import sys
+import copy
+import uncurl
+import hashlib
+import curlify
+import fileinput
+
+from requests import Request, Session, structures
+from loguru import logger as log
+
 
 def eprint(*m):
+    """ debug stuff """
     print(*m, file=sys.stderr)
 
 
 def send(seq, log_msg="headers"):
-    eprint("SEQ:")
-    #print(seq.prepare())
-    #print(dir(seq))
-    eprint(seq.body)
-    eprint(type(seq.body))
+    #eprint("SEQ:")
+    #eprint(seq.body)
+    #eprint(type(seq.body))
+
     if isinstance(seq.body, str):
         seq.body = seq.body.encode()
-
-    eprint("XXXx:", seq)
-
 
     resp = session.send(seq)
     log.trace(
         f"{log_msg}: {len(seq.headers)}, reply len: {len(resp.text)} status {resp.status_code}"
     )
+
+    if not resp.status_code == 200:
+        log.error(f"Supplied curl command not exiting with status 200: {resp.status_code}")
+        sys.exit()
+
     return resp.status_code, len(resp.text), hashlib.sha256(resp.text.encode('utf-8')).hexdigest()
 
 
 def parse(line):
-    #log.info(f"Processing line {line}")
-    context = uncurl.parse_context(line)
     ## uncurl doesn't guarantee an url scheme while curlify insists on having one
+    context = uncurl.parse_context(line)
 
-    ## TODO woudl we need to make https --> https:// ?? or is this implied?
     if not context.url.startswith("http"):
         context = context._replace(url="http://" + context.url)
     req = Request(
@@ -68,15 +65,10 @@ def parse(line):
 
 
 def is_same_without(prep, without, full_status_code, full_len, full_hash):
-    print(dir(prep.headers))
-    eprint("ddddd",without)
-    #sys.exit()
     one_less = copy.deepcopy(prep)
     del one_less.headers[without]
 
     new_status, new_len, new_hash = send(one_less)
-    # print(prep.headers)
-    #if new_status == full_status_code and new_len == full_len:
     if new_status == full_status_code and new_hash == full_hash:
         return False
     return True
@@ -89,12 +81,11 @@ def triage(prep_full, full_status_code, full_len, full_hash):
         return prep_full
 
     log.debug(f"Starting triage with: {header_count} headers")
-    # for h in range(0, header_count):
 
     obsolete_headers = structures.CaseInsensitiveDict()
     needed_headers = structures.CaseInsensitiveDict()
     for headder_name, headder_value in prep_full.headers.items():
-        print("x" * 20, headder_name)
+        #print("x" * 20, headder_name)
         if headder_name == "Content-Length":
             needed_headers[headder_name] = headder_value
             continue
@@ -126,9 +117,9 @@ def condense(prep_full, full_status_code, full_len, full_hash):
         # no change, no test needed
         return prep_full
 
-    # make sure condensing has no effect
+    # make sure condensing has no side effect
     new_status, new_len, new_hash = send(prep_full, log_msg="condenseing")
-    #if (new_status, new_len) != (full_status_code, full_len):
+
     if (new_status, new_hash) != (full_status_code, full_hash):
         prep_full.headers["User-Agent"] = org_user_agent
     return  prep_full
@@ -147,16 +138,13 @@ def process(line):
     global session
 
     session = Session()
-    ### TODO
     #prep_full = req.prepare()
     prep_full = session.prepare_request(req)
-
-    ### TODO
 
     prep_plain = copy.deepcopy(prep_full)
     prep_plain.headers = structures.CaseInsensitiveDict()
 
-    ## TODO: verify the logic of this
+    # needed to ensure reuqets fills in correct value
     if prep_plain.method == "POST":
         prep_plain.headers['Content-Length'] = 0
 
@@ -175,9 +163,9 @@ def process(line):
     log.debug("Probing plain request")
     plain_status_code, plain_len, plain_hash = send(prep_plain)
 
-    if not full_status_code == 200:
-        log.error(f"Supplied curl command not exiting with status 200: {full_status_code}")
-        sys.exit()
+    #if not full_status_code == 200:
+    #    log.error(f"Supplied curl command not exiting with status 200: {full_status_code}")
+    #    sys.exit()
 
     if full_len == 0:
         log.warning("Original requests reply has length 0. Continuing")
