@@ -118,7 +118,8 @@ def condense(prep_full, full_status_code, full_len, full_hash):
     return  prep_full
 
 
-def check_flapping(full_status_code, check_status_code, full_hash, check_hash):
+def check_flapping(full_status_code, full_hash, prep_full ):
+    check_status_code, _, check_hash = send(prep_full)
     if full_status_code == check_status_code and full_hash == check_hash:
         log.debug("No flapping detected")
     else:
@@ -126,30 +127,32 @@ def check_flapping(full_status_code, check_status_code, full_hash, check_hash):
         sys.exit(3)
 
 
-def process(line):
-    req = parse(line)
-    global session
-    session = Session()
-    prep_full = session.prepare_request(req)
-    prep_plain = copy.deepcopy(prep_full)
-    prep_plain.headers = structures.CaseInsensitiveDict()
-
+def ensure_post_content_length_header(prep_plain):
     # needed to ensure requests fills in correct value
     if prep_plain.method == "POST":
         prep_plain.headers['Content-Length'] = 0
+    return prep_plain
 
-    log.debug("Probing full request#1")
+
+def prepare_plain_request(prep_full):
+    prep_plain = copy.deepcopy(prep_full)
+    prep_plain.headers = structures.CaseInsensitiveDict()
+    return ensure_post_content_length_header(prep_plain)
+
+def process(line):
+    global session
+    session = Session()
+    req = parse(line)
+
+    prep_full = session.prepare_request(req)
+    prep_plain = prepare_plain_request(prep_full)
+
+    log.debug("Probing two full requests")
     full_status_code, full_len, full_hash = send(prep_full)
+    plain_status_code, _, plain_hash = send(prep_plain)
 
-    log.debug("Probing full request#2 - for flap detection")
-    check_status_code, check_len, check_hash = send(prep_full)
+    check_flapping(full_status_code, full_hash, prep_full)
 
-    check_flapping(full_status_code, check_status_code, full_hash, check_hash)
-
-    log.debug("Probing plain request")
-    plain_status_code, plain_len, plain_hash = send(prep_plain)
-
-    #if plain_status_code == full_status_code and full_len == plain_len:
     if plain_status_code == full_status_code and full_hash == plain_hash:
         log.debug("Done. All headers have no effect")
         return prep_plain
