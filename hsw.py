@@ -27,27 +27,19 @@ from requests import Request, Session, structures
 from loguru import logger as log
 
 
-def eprint(*m):
-    """ debug stuff """
-    print(*m, file=sys.stderr)
-
-
 def send(seq, log_msg="headers"):
-    #eprint("SEQ:")
-    #eprint(seq.body)
-    #eprint(type(seq.body))
-
     if isinstance(seq.body, str):
         seq.body = seq.body.encode()
-
     resp = session.send(seq)
     log.trace(
         f"{log_msg}: {len(seq.headers)}, reply len: {len(resp.text)} status {resp.status_code}"
     )
-
     if not resp.status_code == 200:
         log.error(f"Supplied curl command not exiting with status 200: {resp.status_code}")
         sys.exit()
+
+    if len(resp.text) == 0:
+        log.warning("Original requests reply has length 0. Continuing")
 
     return resp.status_code, len(resp.text), hashlib.sha256(resp.text.encode('utf-8')).hexdigest()
 
@@ -75,7 +67,7 @@ def is_same_without(prep, without, full_status_code, full_len, full_hash):
 
 
 def triage(prep_full, full_status_code, full_len, full_hash):
-#def triage(prep_full, _ , full_len):
+    log.debug("Some Headders appear relevant. Starting triage")
     header_count = len(prep_full.headers)
     if len(prep_full.headers) == 1:
         return prep_full
@@ -90,7 +82,6 @@ def triage(prep_full, full_status_code, full_len, full_hash):
             needed_headers[headder_name] = headder_value
             continue
 
-
         if is_same_without(prep_full, headder_name, full_status_code, full_len, full_hash):
             log.debug(f"Found needed headder: {headder_name, headder_value}")
             needed_headers[headder_name] = headder_value
@@ -99,13 +90,15 @@ def triage(prep_full, full_status_code, full_len, full_hash):
             obsolete_headers[headder_name] = headder_value
             # del header
 
-    #log.debug(f"Needed: { pprint.pformat(dict(needed_headers), width=9999, indent=4)}")
-    #log.debug(f"Obsolete: {pprint.pformat(dict(obsolete_headers), width=-1, indent=4)}")
-
     prep_full.headers = needed_headers
     return prep_full
 
+
 def condense(prep_full, full_status_code, full_len, full_hash):
+    """ try to shorten User-Agent"""
+    if not 'User-Agent' in prep_full.headers:
+        return prep_full
+
     max_user_agent_len = 15
     org_user_agent = prep_full.headers["User-Agent"]
     log.debug(f'condensing User-Agent: {org_user_agent}')
@@ -136,15 +129,12 @@ def check_flapping(full_status_code, check_status_code, full_hash, check_hash):
 def process(line):
     req = parse(line)
     global session
-
     session = Session()
-    #prep_full = req.prepare()
     prep_full = session.prepare_request(req)
-
     prep_plain = copy.deepcopy(prep_full)
     prep_plain.headers = structures.CaseInsensitiveDict()
 
-    # needed to ensure reuqets fills in correct value
+    # needed to ensure requests fills in correct value
     if prep_plain.method == "POST":
         prep_plain.headers['Content-Length'] = 0
 
@@ -154,53 +144,39 @@ def process(line):
     log.debug("Probing full request#2 - for flap detection")
     check_status_code, check_len, check_hash = send(prep_full)
 
-
     check_flapping(full_status_code, check_status_code, full_hash, check_hash)
-
-    #if probe_plain_request():
-    #    return prep_plain
 
     log.debug("Probing plain request")
     plain_status_code, plain_len, plain_hash = send(prep_plain)
-
-    #if not full_status_code == 200:
-    #    log.error(f"Supplied curl command not exiting with status 200: {full_status_code}")
-    #    sys.exit()
-
-    if full_len == 0:
-        log.warning("Original requests reply has length 0. Continuing")
 
     #if plain_status_code == full_status_code and full_len == plain_len:
     if plain_status_code == full_status_code and full_hash == plain_hash:
         log.debug("Done. All headers have no effect")
         return prep_plain
 
-    log.debug("Some Headders appear relevant. Starting triage")
     prep_minimum = triage(prep_full, full_status_code, full_len, full_hash)
-
-
-    if 'User-Agent' in prep_minimum.headers:
-        prep_minimum = condense(prep_minimum, full_status_code, full_len, full_hash)
+    prep_minimum = condense(prep_minimum, full_status_code, full_len, full_hash)
 
     return prep_minimum
 
 
-if __name__ == "__main__":
-
-    # for fc + vim usecase:
-    # if calling process is editor, set non verbose logging
-
+def handle_editor():
+    """
+    adjust log level for  fc + vim usecase:
+    if calling process is editor, set non verbose logging
+    """
+    log.remove()
     if os.readlink("/proc/%s/exe" % os.getppid()).endswith(("/vi", "/vim")):
-        for log_level in ["DEBUG", "INFO", "WARN"]:
-            log.disable(log_level)
+        log.add(sys.stderr, level="ERROR")
+    else:
+        log.add(sys.stderr, level="DEBUG")
 
+
+if __name__ == "__main__":
+    handle_editor()
     for curl_line in fileinput.input():
         log.debug(f"Processing curl: {curl_line}")
         request_obj = process(curl_line)
 
         print(curlify.to_curl(request_obj))
 
-        # try:
-        #    process(line)
-        # except:
-        #    print("line failed: ", line)
