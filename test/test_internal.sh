@@ -83,16 +83,11 @@ function start_test_server {
 
 start_test_server $TIMEOUT
 
-## problem ##
 test_some_post
-
-
-# okey
-
 test_useragent
 test_null
+test_random
 test_none
 test_some
-test_random
 
 

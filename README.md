@@ -12,7 +12,7 @@ shrinks curl http command to minimal form
 	* [x] add user agent test cases
 	* [ ] add endpoints that 404
 	* [ ] add endpoint that thimes out
-	* [ ] add POST tests
+	* [x] add POST tests
 	* [ ] maybe redirect tests
 	* [x] add gracefull handeling for endpoints flapping endpoint (that dont return the same content for same requests)
 	* [ ] add similarity check to recognice small time (or maybe cdn induced) based diversions
@@ -20,8 +20,8 @@ shrinks curl http command to minimal form
 	* etc ..
 * [ ] add shorten cookies function
 * [ ] add triage GET parameters function
-* [ ] fix POST data bug
-* [ ] add triage POST parmeters function
+* [x] fix POST data bug
+* [x] add triage POST parmeters function
 * [ ] pip this package
 * [ ] add docs
 
