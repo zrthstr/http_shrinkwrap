@@ -1,12 +1,5 @@
 #!/usr/bin/bash
 
-#echo 'jsijdoijsoijdsaijadoi' | ./hsw.py
-
-#echo 'curl heise.de' | ./hsw.py
-
-#echo 'curl -H "Useless: foo" heise.de ' | ./hsw.py
-
-
 function heise {
 (
 cat <<EOF

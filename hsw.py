@@ -169,23 +169,40 @@ def process(line):
     return prep_minimum
 
 
-def handle_editor():
+def config_logging():
     """
-    adjust log level for  fc + vim usecase:
-    if calling process is editor, set non verbose logging
+    if calling process is editor, or env DEBUG=TRUE set non verbose logging
     """
     log.remove()
-    if os.readlink("/proc/%s/exe" % os.getppid()).endswith(("/vi", "/vim")):
+    if os.environ.get('DEBUG') == "TRUE":
+        log.add(sys.stderr, level="DEBUG")
+    elif is_called_from_vim:
         log.add(sys.stderr, level="ERROR")
     else:
-        log.add(sys.stderr, level="DEBUG")
+        log.add(sys.stderr, level="WARNING")
+
+
+def is_called_from_vim():
+    return os.readlink("/proc/%s/exe" % os.getppid()).endswith(("/vi", "/vim"))
 
 
 if __name__ == "__main__":
-    handle_editor()
+    config_logging()
+
+    if is_called_from_vim():
+        last = ""
+        for curl_line in fileinput.input():
+            if curl_line[-2:] == '\\\n':
+                last = last + curl_line[:-2]
+                continue
+        curl_line = last
+        log.debug(f"Processing curl: {curl_line}")
+        request_obj = process(curl_line)
+        print(curlify.to_curl(request_obj))
+        exit()
+
     for curl_line in fileinput.input():
         log.debug(f"Processing curl: {curl_line}")
         request_obj = process(curl_line)
-
         print(curlify.to_curl(request_obj))
 
