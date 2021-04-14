@@ -186,23 +186,24 @@ def is_called_from_vim():
     return os.readlink("/proc/%s/exe" % os.getppid()).endswith(("/vi", "/vim"))
 
 
+def vim_line_merge():
+    last = ""
+    for curl_line in fileinput.input():
+        if curl_line[-2:] == '\\\n':
+            last = last + curl_line[:-2]
+            continue
+    return last
+
+
 if __name__ == "__main__":
     config_logging()
 
     if is_called_from_vim():
-        last = ""
-        for curl_line in fileinput.input():
-            if curl_line[-2:] == '\\\n':
-                last = last + curl_line[:-2]
-                continue
-        curl_line = last
-        log.debug(f"Processing curl: {curl_line}")
-        request_obj = process(curl_line)
-        print(curlify.to_curl(request_obj))
-        exit()
+        curl_line = vim_line_merge()
+    else:
+        curl_line = fileinput.input()[0]
 
-    for curl_line in fileinput.input():
-        log.debug(f"Processing curl: {curl_line}")
-        request_obj = process(curl_line)
-        print(curlify.to_curl(request_obj))
+    log.debug(f"Processing curl: {curl_line}")
+    request_obj = process(curl_line)
+    print(curlify.to_curl(request_obj))
 
