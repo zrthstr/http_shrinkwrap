@@ -23,7 +23,6 @@ EOF
 ) | ../hsw.py
 }
 
-heise
 
 function ipinfo {
 	(
@@ -46,4 +45,7 @@ EOF
 ) | ../hsw.py
 }
 
+export DEBUG=TRUE
+
+heise
 ipinfo

@@ -1,29 +1,28 @@
 # http_shrinkwrap
 shrinks curl http command to minimal form
-* [x] gets rid of all http headers that have no apparent effect
-* [x] shortens user agent
 
-* [ ] use content hash or content instead of size for comaprison
+* [x] get rid of all http headers that have no apparent effect
+* [x] shorten user agent
+
+* [x] use content hash or content instead of size for comaprison
 * [x] gracfully handle empty pages
+* [x] fix POST data bug
 * [ ] fix tests
 	* [x] add vanilla
 	* [x] add test case where some headers are needed
 	* [x] add test case where no headers are needed
 	* [x] add user agent test cases
-	* [ ] add endpoints that 404
-	* [ ] add endpoint that thimes out
 	* [x] add POST tests
-	* [ ] maybe redirect tests
 	* [x] add gracefull handeling for endpoints flapping endpoint (that dont return the same content for same requests)
-	* [ ] add similarity check to recognice small time (or maybe cdn induced) based diversions
+	* [ ] add 404 endpoints
+	* [ ] add timeout endpoint
+	* [ ] maybe add redirect tests?
+	* [ ] add similarity check to recognice small e.g. time based diversions
 	* [ ] add test for empty response
-	* etc ..
 * [ ] add shorten cookies function
-* [ ] add triage GET parameters function
-* [x] fix POST data bug
-* [x] add triage POST parmeters function
-* [ ] pip this package
-* [ ] add docs
+* [ ] add triage GET/POST parameters function
+* [ ] pip this package (https://antonz.org/python-packaging/)
+* [ ] improve docs
 
 ## example
 ### example ipinfo
@@ -55,6 +54,8 @@ Note:
 * wrap the curl command in double quotes
 * use "Here documents" if you curl command contains double quotes
 
+### debug
+`export DEBUG=TRUE`
 
 ### usecase with fc & vi
 given `export EDITOR="vim"`

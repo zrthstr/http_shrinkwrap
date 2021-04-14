@@ -4,6 +4,7 @@ set -e
 
 HOST="http://127.0.0.1:8000"
 TIMEOUT=12
+export DEBUG=TRUE
 
 
 function test_some {
