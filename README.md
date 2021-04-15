@@ -14,9 +14,11 @@ curl 'https://ipinfo.io/'   -H 'authority: ipinfo.io'   -H 'cache-control: max-a
 ```
 
 into this:
+
 ```bash
 curl -X GET -H 'user-agent: Mozilla/5.0' https://ipinfo.io/
 ```
+
 ### example heise.de
 turns this:
 
