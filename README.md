@@ -1,31 +1,12 @@
-# http_shrinkwrap
-shrinks curl http command to minimal form
+# http_shrinkwrap - Shrinks curl HTTP requests commands to their minimal form by removing obsolete HTTP headers
+# In a nutshell
+http_shrinkwrap is a cli tool that allows you to remove all HTTP headers that have no effect on the response obtained from the webserver.
+Since the Chrome network inspector has a nifty "Copy as cURL", this tool is useful for minimizing the recreated browser requests in your shell.
+The tool is written in python an based on [uncurl](https://github.com/spulec/uncurl).
 
-* [x] get rid of all http headers that have no apparent effect
-* [x] shorten user agent
 
-* [x] use content hash or content instead of size for comaprison
-* [x] gracfully handle empty pages
-* [x] fix POST data bug
-* [ ] fix tests
-	* [x] add vanilla
-	* [x] add test case where some headers are needed
-	* [x] add test case where no headers are needed
-	* [x] add user agent test cases
-	* [x] add POST tests
-	* [x] add gracefull handeling for endpoints flapping endpoint (that dont return the same content for same requests)
-	* [ ] add 404 endpoints
-	* [ ] add timeout endpoint
-	* [ ] maybe add redirect tests?
-	* [ ] add similarity check to recognice small e.g. time based diversions
-	* [ ] add test for empty response
-* [ ] add shorten cookies function
-* [ ] add triage GET/POST parameters function
-* [ ] pip this package (https://antonz.org/python-packaging/)
-* [ ] improve docs
-
-## example
-### example ipinfo
+## Example
+### Example ipinfo
 turns this:
 
 	curl 'https://ipinfo.io/'   -H 'authority: ipinfo.io'   -H 'cache-control: max-age=0'   -H 'dnt: 1'   -H 'upgrade-insecure-requests: 1'   -H 'user-agent: Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/82.0.2240.398 Safari/534.16'   -H 'accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9'   -H 'sec-fetch-site: none'   -H 'sec-fetch-mode: navigate'   -H 'sec-fetch-user: ?1'   -H 'sec-fetch-dest: document'   -H 'accept-language: en-US,en-GB;q=0.9,en;q=0.8,pt-PT;q=0.7,pt;q=0.6,de;q=0.5'   -H 'sec-gpc: 1'   --compressed
@@ -66,5 +47,3 @@ then run `fc` > now inside vim run `:%! ./hsw.py` ; then save output if needed `
  
 ## install
 tbd
-
-## testing
