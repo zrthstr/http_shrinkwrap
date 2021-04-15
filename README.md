@@ -24,7 +24,7 @@ into this:
 	curl -X GET https://www.heise.de/
 
 ## usage
-### usecase plain
+### from stdin
 
 pipe curl command to `hsw.py`
 eg: in Chrome/Mozilla dev tools > "copy request as curl"
@@ -35,14 +35,15 @@ Note:
 * wrap the curl command in double quotes
 * use "Here documents" if you curl command contains double quotes
 
-### debug
-`export DEBUG=TRUE`
-
-### usecase with fc & vi
+### via fc & vi
 given `export EDITOR="vim"`
 
 in Chrome/Mozilla dev tools > "copy request as curl" > paste and execute curl command in terminal
 then run `fc` > now inside vim run `:%! ./hsw.py` ; then save output if needed `:w outfile_name`
+
+
+### debug
+`export DEBUG=TRUE`
 
  
 ## install
