@@ -36,9 +36,9 @@ curl -X GET https://www.heise.de/
 ### from stdin
 
 pipe curl command to `hsw.py`
-eg: in Chrome/Mozilla dev tools > "copy request as curl"
-`echo COMMAND | ./hsw.py`
-eg: `echo "curl http://foo.com -H 'some thing'" | ./hsw.py`
+eg:
+* in Chrome/Mozilla dev tools > "copy request as curl"
+* `echo "curl http://foo.com -H 'some thing'" | ./hsw.py`
 
 Note:
 * wrap the curl command in double quotes
