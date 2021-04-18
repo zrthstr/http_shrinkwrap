@@ -1,4 +1,4 @@
-# http_shrinkwrap - Shrinks curl HTTP requests commands to their minimal form by removing obsolete HTTP headers
+# http_shrinkwrap - Shrinks curl HTTP requests commands to their minimal form by removing obsolete headers
 # In a nutshell
 http_shrinkwrap is a cli tool that allows you to remove all HTTP headers that have no effect on the response obtained from the webserver.
 Since the Chrome network inspector has a nifty "Copy as cURL", this tool is useful for minimizing the recreated browser requests in your shell.
