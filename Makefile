@@ -16,3 +16,20 @@ test_external:
 
 test_internal:
 	cd test && ./test_internal.sh
+
+# create dist
+create_dist:
+	python setup.py sdist bdist_wheel
+
+# test upload
+upload:
+	twine upload -r testpypi dist/*
+
+## pip install -i https://test.pypi.org/simple/ http-shrinkwrap
+## https://test.pypi.org/project/http-shrinkwrap/
+
+bump:
+	bumpversion --config-file .bumpversion.cfg patch
+
+clean:
+	rm -rf dist build http_shrinkwrap.egg-info

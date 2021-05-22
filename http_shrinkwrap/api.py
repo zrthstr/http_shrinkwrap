@@ -8,12 +8,9 @@
 # the parameters that come from chrome > copy_as_curl...
 #
 # Note:
-# we shall not mess with all headder! Else 'request' will get sad/angry and die!
+# we shall not mess with all headder! For else 'request' will get sad/angry and die!
 # e.g. Content-Length is not optional in POST requests.
 # Removing such results in sadness expressed by a stack trace in requests/adapters.py
-
-# what's next?
-#  condense cookies?
 
 import os
 import sys
@@ -194,16 +191,4 @@ def vim_line_merge():
             continue
     return last
 
-
-if __name__ == "__main__":
-    config_logging()
-
-    if is_called_from_vim():
-        curl_line = vim_line_merge()
-    else:
-        curl_line = fileinput.input()[0]
-
-    log.debug(f"Processing curl: {curl_line}")
-    request_obj = process(curl_line)
-    print(curlify.to_curl(request_obj))
 
