@@ -9,25 +9,27 @@
 #
 # Note:
 # we shall not mess with all headder! For else 'request' will get sad/angry and die!
-# e.g. Content-Length is not optional in POST requests.
-# Removing such results in sadness expressed by a stack trace in requests/adapters.py
+# e.g. Content-Length headder is not optional in POST requests.
+# Removing such would result in sadness, expressed by a stack trace in requests/adapters.py
 
 import os
 import sys
 import copy
-import uncurl
 import hashlib
-import curlify
 import fileinput
+
+import uncurl
+#import curlify
 
 from requests import Request, Session, structures
 from loguru import logger as log
 
+#global SESSION
 
 def send(seq, log_msg="headers"):
     if isinstance(seq.body, str):
         seq.body = seq.body.encode()
-    resp = session.send(seq)
+    resp = SESSION.send(seq)
     log.trace(
         f"{log_msg}: {len(seq.headers)}, reply len: {len(resp.text)} status {resp.status_code}"
     )
@@ -146,13 +148,14 @@ def get_full_and_plain(prep_full, prep_plain):
 
 
 def process(line):
-    global session
-    session = Session()
+    global SESSION
+    SESSION = Session()
     req = parse(line)
 
-    prep_full = session.prepare_request(req)
+    prep_full = SESSION.prepare_request(req)
     prep_plain = prepare_plain_request(prep_full)
-    full_status_code, full_hash, plain_status_code, plain_hash = get_full_and_plain(prep_full, prep_plain)
+    full_status_code, full_hash, plain_status_code, plain_hash = \
+            get_full_and_plain(prep_full, prep_plain)
 
     check_flapping(full_status_code, full_hash, prep_full)
 
@@ -173,7 +176,7 @@ def config_logging():
     log.remove()
     if os.environ.get('DEBUG') == "TRUE":
         log.add(sys.stderr, level="DEBUG")
-    elif is_called_from_vim:
+    elif is_called_from_vim():
         log.add(sys.stderr, level="ERROR")
     else:
         log.add(sys.stderr, level="WARNING")
@@ -190,5 +193,3 @@ def vim_line_merge():
             last = last + curl_line[:-2]
             continue
     return last
-
-

@@ -1,21 +1,11 @@
 #!/usr/bin/env python3
 
-#import os
-#import sys
-#import copy
-#import uncurl
-#import hashlib
-import curlify
 import fileinput
+import curlify
 
-from .api import * # this is ugly!
+from .api import config_logging, is_called_from_vim, vim_line_merge, process, log
 
-#from requests import Request, Session, structures
-#from loguru import logger as log
-
-
-
-if __name__ == "__main__":
+def main():
     config_logging()
 
     if is_called_from_vim():
@@ -26,4 +16,3 @@ if __name__ == "__main__":
     log.debug(f"Processing curl: {curl_line}")
     request_obj = process(curl_line)
     print(curlify.to_curl(request_obj))
-

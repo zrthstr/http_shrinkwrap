@@ -12,7 +12,7 @@ setup(
     url='https://github.com/zrthstr/http_shrinkwrap',
     entry_points={
         'console_scripts': [
-            'uncurl = http_shrinkwrap.bin:main',
+            'http-shrinkwrap = http_shrinkwrap.bin:main',
         ],
     },
     install_requires=['uncurl', 'curlify', 'requests', 'loguru'],

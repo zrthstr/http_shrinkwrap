@@ -18,7 +18,7 @@ test_internal:
 	cd test && ./test_internal.sh
 
 # create dist
-create_dist:
+build:
 	python setup.py sdist bdist_wheel
 
 # test upload
@@ -32,4 +32,15 @@ bump:
 	bumpversion --config-file .bumpversion.cfg patch
 
 clean:
-	rm -rf dist build http_shrinkwrap.egg-info
+	rm -rf dist build http_shrinkwrap.egg-info http_shrinkwrap/__pycache__
+
+test_install:
+	sudo pip3 install dist/http_shrinkwrap-0.0.*.tar.gz
+
+test_uninstall:
+	sudo pip3 uninstall -y http-shrinkwrap
+
+reinstall: test_uninstall clean build test_install
+
+test_local:
+	DEBUG=TRUE echo 'curl https://www.heise.de -H "fff: foo" -H "fofoof: foofofo"'  | http-shrinkwrap
