@@ -36,12 +36,24 @@ curl -X GET https://www.heise.de/
 ```
 
 ## usage
+There are three main ways to run `http_shrinkwrap`
+* By passing a `file` as argument
+* Via `stdin`
+* From `vim` (or `fc`)
+
+### via file
+	http_shrinkwrap file_containing_curl_cmd
+
+eg:
+* in Chrome/Mozilla dev tools > "copy request as curl" & past to some_file
+* `http-shrinkwrap some_file`
+
 ### from stdin
 
-pipe curl command to `hsw.py`
+pipe curl command to `http-shrinkwrap`
 eg:
 * in Chrome/Mozilla dev tools > "copy request as curl"
-* `echo "curl http://foo.com -H 'some thing'" | ./hsw.py`
+* `echo "curl http://foo.com -H 'some thing'" | http-shrinkwrap`
 
 Note:
 * wrap the curl command in double quotes
@@ -53,8 +65,17 @@ given `export EDITOR="vim"`
 * in Chrome/Mozilla dev tools > "copy request as curl"
 * paste and execute curl command in terminal
 * run `fc`
-* now inside vim run `:%! ./hsw.py`
+* now inside vim run `:%! http-shrinkwrap`
 * then save output if needed `:w outfile_name`
+
+## run without install
+	git clone https://github.com/zrthstr/http_shrinkwrap
+	cd http_shrinkwrap
+	pip install -r requirements.txt
+	
+	echo 'some curl cmd ' | python -m http_shrinkwrap.bin
+	# or
+	python -m http_shrinkwrap.bin some_file_containing_a_curl_cmd
 
 
 ## install
