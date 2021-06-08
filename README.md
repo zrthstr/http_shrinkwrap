@@ -1,28 +1,6 @@
 # http_shrinkwrap
 shrinks curl http command to minimal form
 
-* [x] get rid of all http headers that have no apparent effect
-* [x] shorten user agent
-
-* [x] use content hash or content instead of size for comaprison
-* [x] gracfully handle empty pages
-* [x] fix POST data bug
-* [ ] fix tests
-	* [x] add vanilla
-	* [x] add test case where some headers are needed
-	* [x] add test case where no headers are needed
-	* [x] add user agent test cases
-	* [x] add POST tests
-	* [x] add gracefull handeling for endpoints flapping endpoint (that dont return the same content for same requests)
-	* [ ] add 404 endpoints
-	* [ ] add timeout endpoint
-	* [ ] maybe add redirect tests?
-	* [ ] add similarity check to recognice small e.g. time based diversions
-	* [ ] add test for empty response
-* [ ] add shorten cookies function
-* [ ] add triage GET/POST parameters function
-* [ ] pip this package (https://antonz.org/python-packaging/)
-* [ ] improve docs
 
 ## example
 ### example ipinfo
@@ -63,8 +41,27 @@ given `export EDITOR="vim"`
 in Chrome/Mozilla dev tools > "copy request as curl" > paste and execute curl command in terminal
 then run `fc` > now inside vim run `:%! ./hsw.py` ; then save output if needed `:w outfile_name`
 
- 
 ## install
-tbd
+	pip3 install -i https://test.pypi.org/simple/ http-shrinkwrap
 
 ## testing
+	make test
+
+## todo
+* [x] get rid of all http headers that have no apparent effect
+* [x] shorten user agent
+* [ ] make nonverbose when called programmatically
+* [ ] fix tests
+	* [x] add vanilla
+	* [x] add test case where some headers are needed
+	* [x] add test case where no headers are needed
+	* [x] add user agent test cases
+	* [x] add POST tests
+	* [x] add gracefull handeling for endpoints flapping endpoint (that dont return the same content for same requests)
+	* [ ] add 404 endpoints
+	* [ ] add timeout endpoint
+	* [ ] maybe add redirect tests?
+	* [ ] add similarity check to recognice small e.g. time based diversions
+	* [ ] add test for empty response
+* [ ] add shorten cookies function
+* [ ] add triage GET/POST parameters function
