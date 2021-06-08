@@ -22,7 +22,7 @@ into this:
 curl -X GET -H 'user-agent: Mozilla/5.0' https://ipinfo.io/
 ```
 
-### example heise.de
+### Example heise.de
 turns this:
 
 ```bash
@@ -35,20 +35,20 @@ into this:
 curl -X GET https://www.heise.de/
 ```
 
-## usage
+## Usage
 There are three main ways to run `http_shrinkwrap`
 * By passing a `file` as argument
 * Via `stdin`
 * From `vim` (or `fc`)
 
-### via file
+### Via file
 	http_shrinkwrap file_containing_curl_cmd
 
 eg:
 * in Chrome/Mozilla dev tools > "copy request as curl" & past to some_file
 * `http-shrinkwrap some_file`
 
-### from stdin
+### Via stdin
 
 pipe curl command to `http-shrinkwrap`
 eg:
@@ -59,7 +59,7 @@ Note:
 * wrap the curl command in double quotes
 * use "Here documents" if you curl command contains double quotes
 
-### via fc & vi
+### From fc & vi
 given `export EDITOR="vim"`
 
 * in Chrome/Mozilla dev tools > "copy request as curl"
@@ -68,7 +68,7 @@ given `export EDITOR="vim"`
 * now inside vim run `:%! http-shrinkwrap`
 * then save output if needed `:w outfile_name`
 
-## run without install
+## Run without install
 	git clone https://github.com/zrthstr/http_shrinkwrap
 	cd http_shrinkwrap
 	pip install -r requirements.txt
@@ -78,26 +78,22 @@ given `export EDITOR="vim"`
 	python -m http_shrinkwrap.bin some_file_containing_a_curl_cmd
 
 
-## install
+## Install
 	pip3 install -i https://test.pypi.org/simple/ http-shrinkwrap
 
-### debug
+
+## Development
+
+### Debuging
 `export DEBUG=TRUE`
 
-## testing
+### Testing
 	make test
 
-## todo
-* [x] get rid of all http headers that have no apparent effect
-* [x] shorten user agent
+### Todo
 * [ ] make nonverbose when called programmatically
 * [ ] fix tests
-	* [x] add vanilla
-	* [x] add test case where some headers are needed
-	* [x] add test case where no headers are needed
-	* [x] add user agent test cases
-	* [x] add POST tests
-	* [x] add gracefull handeling for endpoints flapping endpoint (that dont return the same content for same requests)
+* [ ] add std test case
 	* [ ] add 404 endpoints
 	* [ ] add timeout endpoint
 	* [ ] maybe add redirect tests?
