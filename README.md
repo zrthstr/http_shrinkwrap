@@ -57,7 +57,7 @@ eg:
 
 Note:
 * wrap the curl command in double quotes
-* use "Here documents" if your curl command contains double quotes
+* this will not work if the curl command has single and double quotes or other sepcial chars. Use the file method in these cases.
 
 ### From fc & vim
 given `export EDITOR="vim"`
