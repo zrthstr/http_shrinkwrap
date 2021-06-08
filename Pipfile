@@ -1,5 +1,5 @@
 [[source]]
-url = "https://pypi.org/simple"
+url = "https://test.pypi.org/project/http-shrinkwrap/"
 verify_ssl = true
 name = "pypi"
 
@@ -11,6 +11,7 @@ curlify = "*"
 
 [dev-packages]
 flask = "*"
+bumpversion = "*"
 
 [requires]
 python_version = "3.9"

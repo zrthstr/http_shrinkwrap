@@ -1,0 +1,13 @@
+.vscode
+http_shrinkwrap.egg-info/*
+dist/*
+.tox
+.coverage
+*.pyc
+*~
+.noseids
+build/
+venv/*
+
+TODO
+copy_curl.png

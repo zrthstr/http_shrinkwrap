@@ -1,5 +1,13 @@
 #!/usr/bin/bash
 
+set -e
+set -o pipefail   # Unveils hidden failures
+set -o nounset    # Exposes unset variables
+
+export DEBUG=TRUE
+#EXEC="python3 ../http_shrinkwrap/bin.py"
+EXEC="python3 -m http_shrinkwrap.bin"
+
 function heise {
 (
 cat <<EOF
@@ -20,7 +28,7 @@ curl 'https://www.heise.de/' \
   -H 'if-modified-since: Wed, 18 Nov 2020 21:57:08 GMT' \
   --compressed
 EOF
-) | ../hsw.py
+) | $EXEC
 }
 
 
@@ -42,10 +50,9 @@ curl 'https://ipinfo.io/' \
   -H 'sec-gpc: 1' \
   --compressed
 EOF
-) | ../hsw.py
+) | $EXEC
 }
 
-export DEBUG=TRUE
 
 heise
 ipinfo

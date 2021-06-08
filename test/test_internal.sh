@@ -1,6 +1,11 @@
 #!/usr/bin/bash
 
 set -e
+set -o pipefail   # Unveils hidden failures
+set -o nounset    # Exposes unset variables
+
+#EXEC="python3 ../http_shrinkwrap/bin.py"
+EXEC="python3 -m http_shrinkwrap.bin"
 
 HOST="http://127.0.0.1:8000"
 TIMEOUT=12
@@ -12,7 +17,7 @@ function test_some {
 	echo "[*] Running test: ${FUNCNAME[0]}"
 	SHOULD="curl -X GET -H 'Needed-0: Is-0' -H 'Needed-1: Is-1' ${HOST}/some"
 	out=$(echo "${SHOULD} -H 'Not-Needed: Something' --compressed" \
-		| ../hsw.py)
+		| $EXEC )
 	echo out: $out
 	[[ "${out}" == "${SHOULD}" ]] || (echo "some_headers test failed"; exit 1)
 	echo "[*] Test ${FUNCNAME[0]} passed!"
@@ -23,7 +28,7 @@ function test_none {
 	echo "[*] Running test: ${FUNCNAME[0]}"
 	SHOULD="curl -X GET ${HOST}/static"
 	out=$(echo "${SHOULD} -H 'Not-Needed-0: Is-0' -H 'Not-Needed-1: Is-1' -H 'Not-Needed-2: Something' --compressed" \
-		| ../hsw.py)
+		| $EXEC )
 	echo out: $out
 	[[ "${out}" == "${SHOULD}" ]] || (echo "none_needed test failed"; exit 1)
 	echo "[*] Test ${FUNCNAME[0]} passed!"
@@ -34,7 +39,7 @@ function test_useragent {
 	echo "[*] Running test: ${FUNCNAME[0]}"
 	SHOULD="curl -X GET -H 'User-Agent: Mozilla/5.0' ${HOST}/useragent"
 	out=$(echo "${SHOULD} -H 'User-Agent: Mozilla/5.0 UNNECECARY_UNNECECARY_UNNECECARY_UNNECECARY_UNNECECARY'" \
-		| ../hsw.py)
+		| $EXEC )
 	echo out: $out
 	[[ "${out}" == "${SHOULD}" ]] || (echo "user_agent test failed"; exit 1)
 	echo "[*] Test ${FUNCNAME[0]} passed!"
@@ -45,7 +50,7 @@ function test_random {
 	echo "[*] Running test: ${FUNCNAME[0]}"
 	RET_SHOULD="3"
 	echo "curl -X GET -H 'Needed-1: Is-1' -H 'Needed-0: Is-0'  ${HOST}/random" \
-	| ../hsw.py && true
+	| $EXEC && true
 		[[ $? -eq ${RET_SHOULD} ]] || (echo "Flip flop test failed"; exit 1)
 	echo "[*] Test ${FUNCNAME[0]} passed!"
 }
@@ -56,7 +61,7 @@ function test_null {
 	echo "[*] Running test: ${FUNCNAME[0]}"
 	SHOULD="curl -X GET -H 'Needed-0: Is-0' ${HOST}/null"
 	out=$(echo "${SHOULD} -H 'User-Agent: NOTNEEDED'" \
-		| ../hsw.py)
+		| $EXEC )
 	[[ "${out}" == "${SHOULD}" ]] || (echo "null test failed"; exit 1)
 	echo "[*] Test ${FUNCNAME[0]} passed!"
 }
@@ -68,7 +73,7 @@ function test_some_post {
 	SHOULD="curl -X POST -H 'Content-Length: 9' -H 'Needed-0: Is-0' -H 'Needed-1: Is-1' -d some_data ${HOST}/some"
 	echo "SSSSS" $SHOULD
 	out=$(echo "${SHOULD} -H 'User-Agent: NOTNEEDED' -H 'Foo: foo'" \
-		| ../hsw.py)
+		| $EXEC )
 	echo "out iis:::"
 	echo "$out"
 	[[ "${out}" == "${SHOULD}" ]] || (echo "null post test failed......"; exit 1)
@@ -77,7 +82,7 @@ function test_some_post {
 
 function start_test_server {
 	echo "[*] Starting testing server with timeout: $1"
-	timeout ${1} ./test_server.py & 1>&2
+	timeout ${1} ./test/test_server.py & 1>&2
 	sleep 0.5
 }
 

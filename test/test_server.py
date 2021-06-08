@@ -6,9 +6,6 @@ from random import randint
 from flask import Flask, request
 app = Flask(__name__, static_folder=None)
 
-
-#@app.route('/', methods=['GET'])
-
 @app.route('/')
 def info_rsq():
     #print(app.url_map)

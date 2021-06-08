@@ -1,6 +1,6 @@
-# http_shrinkwrap - Minimizes curl HTTP requests commands
+# http_shrinkwrap - Automatically minimizes curl HTTP commands
 # In a nutshell
-http_shrinkwrap is a cli tool that helpd to remove all obsolete HTTP headers from a curl HTTP request. All headers that have no apparent effect on the response obtained from the webserver are removed. Long Cookies and some other header values are also shortened.  
+http_shrinkwrap is a cli tool that removes all obsolete HTTP headers from a curl HTTP request. All headers that have no apparent effect on the response obtained from the webserver are removed. Long Cookies and some other header values are also shortened.  
 Since the Chrome network inspector has a nifty "Copy as cURL", this tool is useful for minimizing the recreated browser requests in your shell.
 The tool is written in python an based on [uncurl](https://github.com/spulec/uncurl).
 
@@ -54,9 +54,31 @@ given `export EDITOR="vim"`
 * then save output if needed `:w outfile_name`
 
 
+## install
+	pip3 install -i https://test.pypi.org/simple/ http-shrinkwrap
+
 ### debug
 `export DEBUG=TRUE`
 
- 
-## install
-tbd
+## testing
+	make test
+
+## todo
+* [x] get rid of all http headers that have no apparent effect
+* [x] shorten user agent
+* [ ] make nonverbose when called programmatically
+* [ ] fix tests
+	* [x] add vanilla
+	* [x] add test case where some headers are needed
+	* [x] add test case where no headers are needed
+	* [x] add user agent test cases
+	* [x] add POST tests
+	* [x] add gracefull handeling for endpoints flapping endpoint (that dont return the same content for same requests)
+	* [ ] add 404 endpoints
+	* [ ] add timeout endpoint
+	* [ ] maybe add redirect tests?
+	* [ ] add similarity check to recognice small e.g. time based diversions
+	* [ ] add test for empty response
+* [ ] add shorten cookies function
+* [ ] add triage GET/POST parameters function
+
