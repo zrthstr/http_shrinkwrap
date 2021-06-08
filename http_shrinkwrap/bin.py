@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 
+import sys
 import fileinput
 import curlify
 
@@ -9,7 +10,7 @@ from .api import config_logging, is_called_from_vim, vim_line_merge, process, lo
 def main():
     config_logging()
 
-    if is_called_from_vim():
+    if len(sys.argv) > 1 or is_called_from_vim():
         curl_line = vim_line_merge()
     else:
         curl_line = fileinput.input().__next__()
