@@ -5,7 +5,7 @@ http_shrinkwrap is a cli tool that removes all obsolete HTTP headers from a curl
 * Long Cookies and some other header values are also shortened.  
 
 Since the Chrome network inspector has a nifty "Copy as cURL", this tool is useful for minimizing the recreated browser requests in your shell.
-The tool is written in python an based on [uncurl](https://github.com/spulec/uncurl).
+The tool is written in python and based on [uncurl](https://github.com/spulec/uncurl).
 
 
 ## Example
@@ -57,9 +57,9 @@ eg:
 
 Note:
 * wrap the curl command in double quotes
-* use "Here documents" if you curl command contains double quotes
+* use "Here documents" if your curl command contains double quotes
 
-### From fc & vi
+### From fc & vim
 given `export EDITOR="vim"`
 
 * in Chrome/Mozilla dev tools > "copy request as curl"
@@ -84,7 +84,7 @@ given `export EDITOR="vim"`
 
 ## Development
 
-### Debuging
+### Debugging
 `export DEBUG=TRUE`
 
 ### Testing
@@ -97,7 +97,7 @@ given `export EDITOR="vim"`
 	* [ ] add 404 endpoints
 	* [ ] add timeout endpoint
 	* [ ] maybe add redirect tests?
-	* [ ] add similarity check to recognice small e.g. time based diversions
+	* [ ] add similarity check to recognise small e.g. time based diversions
 	* [ ] add test for empty response
 * [ ] add shorten cookies function
 * [ ] add triage GET/POST parameters function
