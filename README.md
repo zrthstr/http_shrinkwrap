@@ -1,6 +1,9 @@
 # http_shrinkwrap - Automatically minimizes curl HTTP commands
-# In a nutshell
-http_shrinkwrap is a cli tool that removes all obsolete HTTP headers from a curl HTTP request. All headers that have no apparent effect on the response obtained from the webserver are removed. Long Cookies and some other header values are also shortened.  
+## In a nutshell
+http_shrinkwrap is a cli tool that removes all obsolete HTTP headers from a curl HTTP request.
+* All headers that have no apparent effect on the response obtained from the webserver are removed.
+* Long Cookies and some other header values are also shortened.  
+
 Since the Chrome network inspector has a nifty "Copy as cURL", this tool is useful for minimizing the recreated browser requests in your shell.
 The tool is written in python an based on [uncurl](https://github.com/spulec/uncurl).
 
