@@ -15,6 +15,7 @@
 import os
 import sys
 import copy
+import psutil
 import hashlib
 import fileinput
 
@@ -183,7 +184,11 @@ def config_logging():
 
 
 def is_called_from_vim():
-    return os.readlink("/proc/%s/exe" % os.getppid()).endswith(("/vi", "/vim"))
+    try:
+        if psutil.Process(os.getppid()).name() in ["vim","vim"]:
+            return true
+    except:
+        return false
 
 
 def vim_line_merge():

@@ -2,3 +2,4 @@ loguru
 requests
 uncurl
 curlify
+psutil

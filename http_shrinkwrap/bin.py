@@ -4,7 +4,6 @@ import sys
 import fileinput
 import curlify
 
-#from api import config_logging, is_called_from_vim, vim_line_merge, process, log
 from .api import config_logging, is_called_from_vim, vim_line_merge, process, log
 
 def main():

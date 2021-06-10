@@ -57,6 +57,7 @@ install_from_tgz:
 uninstall:
 	sudo pip3 uninstall -y http-shrinkwrap
 
+#release: clean bump biild upload # and git push
 
 ##############
 ## e2e test ##

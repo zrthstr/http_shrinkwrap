@@ -5,6 +5,9 @@ from setuptools import setup, find_packages
 with open("README.md") as f:
     long_description = f.read()
 
+with open("requirements.txt") as f:
+    requirements = f.read().splitlines()
+
 setup(
     name='http_shrinkwrap',
     version=init.__version__,
@@ -20,7 +23,7 @@ setup(
         classifiers=[
             'Intended Audience :: Developers',
             'Intended Audience :: System Administrators',
-            'Operating System :: OS Independent',
+            'Operating System :: POSIX',
             'Programming Language :: Python :: 3',
             'Topic :: Internet',
             'Topic :: Security',
@@ -34,6 +37,6 @@ setup(
             'http-shrinkwrap = http_shrinkwrap.bin:main',
         ],
     },
-    install_requires=['uncurl', 'curlify', 'requests', 'loguru'],
+    install_requires=requirements,
     packages=find_packages(exclude=("tests", "tests.*", "test")),
 )
