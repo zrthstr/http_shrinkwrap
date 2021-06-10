@@ -89,16 +89,3 @@ given `export EDITOR="vim"`
 
 ### Testing
 	make test
-
-### Todo
-* [ ] make nonverbose when called programmatically
-* [ ] fix tests
-* [ ] add std test case
-	* [ ] add 404 endpoints
-	* [ ] add timeout endpoint
-	* [ ] maybe add redirect tests?
-	* [ ] add similarity check to recognise small e.g. time based diversions
-	* [ ] add test for empty response
-* [ ] add shorten cookies function
-* [ ] add triage GET/POST parameters function
-
