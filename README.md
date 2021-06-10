@@ -37,9 +37,9 @@ curl -X GET https://www.heise.de/
 
 ## Usage
 There are three main ways to run `http_shrinkwrap`
-* By passing a `file` as argument
-* Via `stdin`
-* From `vim` (or `fc`)
+* By passing a `file` as an argument
+* Via piping a curl command from `stdin`
+* By calling `http_shrinkwrap` from insde `vim` (or `fc`)
 
 ### Via file
 	http_shrinkwrap file_containing_curl_cmd
