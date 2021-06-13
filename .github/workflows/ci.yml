@@ -25,3 +25,5 @@ jobs:
       - name: make test
         run: make test
           #run: poetry --help
+      - name: penv
+        run: pipenv
