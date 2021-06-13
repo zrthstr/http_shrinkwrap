@@ -6,7 +6,8 @@ authors = ["zrthstr <zrth1k@gmail.com>"]
 license = "Apache License 2.0"
 
 [tool.poetry.dependencies]
-python = "^3.9"
+#python = "^3.9"
+python = "^3.8"
 loguru = "^0.5.3"
 requests = "^2.25.1"
 uncurl = "^0.0.11"
