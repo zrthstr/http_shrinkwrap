@@ -85,7 +85,7 @@ function start_test_server {
 
 
 start_test_server $TIMEOUT
-
+sleep 2
 test_some_post
 test_useragent
 test_null
