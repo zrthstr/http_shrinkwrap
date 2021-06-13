@@ -5,7 +5,7 @@ set -o pipefail   # Unveils hidden failures
 set -o nounset    # Exposes unset variables
 
 #EXEC="python3 ../http_shrinkwrap/bin.py"
-EXEC="python3 -m http_shrinkwrap.bin"
+EXEC="poetry run python3 -m http_shrinkwrap.bin"
 
 HOST="http://127.0.0.1:8000"
 TIMEOUT=12
