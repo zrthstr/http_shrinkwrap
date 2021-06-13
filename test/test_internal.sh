@@ -79,7 +79,7 @@ function test_some_post {
 
 function start_test_server {
 	echo "[*] Starting testing server with timeout: $1"
-	timeout ${1} ./test/test_server.py & 1>&2
+	timeout poetry run ${1} ./test/test_server.py & 1>&2
 	sleep 0.5
 }
 
