@@ -22,8 +22,8 @@ jobs:
         uses: abatilo/actions-poetry@v2.0.0
         with:
           poetry-version: ${{ matrix.poetry-version }}
-      - name: make test
-        run: make test
+            #- name: make test
+            #run: make test
           #run: poetry --help
       - name: penv
         run: pipenv
