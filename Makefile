@@ -68,3 +68,7 @@ reinstall: uninstall clean build install_from_tgz test_system_version
 test_system_version:
 	DEBUG=TRUE echo 'curl https://www.heise.de -H "fff: foo" -H "fofoof: foofofo"'  | http-shrinkwrap
 
+
+#to be removed
+true:
+	echo YESYESYEYSEYS
