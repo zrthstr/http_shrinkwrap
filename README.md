@@ -49,7 +49,6 @@ eg:
 * `http-shrinkwrap some_file`
 
 ### Via stdin
-
 pipe curl command to `http-shrinkwrap`
 eg:
 * in Chrome/Mozilla dev tools > "copy request as curl"
@@ -58,6 +57,7 @@ eg:
 Note:
 * wrap the curl command in double quotes
 * this will not work if the curl command has single and double quotes or other sepcial chars. Use the file method in these cases.
+
 
 ### From fc & vim
 given `export EDITOR="vim"`
@@ -68,6 +68,11 @@ given `export EDITOR="vim"`
 * now inside vim run `:%! http-shrinkwrap`
 * then save output if needed `:w outfile_name`
 
+
+## Install
+	pip3 install -i https://test.pypi.org/simple/ http-shrinkwrap
+
+
 ## Run without install
 	git clone https://github.com/zrthstr/http_shrinkwrap
 	cd http_shrinkwrap
@@ -76,10 +81,6 @@ given `export EDITOR="vim"`
 	echo 'some curl cmd ' | python -m http_shrinkwrap.bin
 	# or
 	python -m http_shrinkwrap.bin some_file_containing_a_curl_cmd
-
-
-## Install
-	pip3 install -i https://test.pypi.org/simple/ http-shrinkwrap
 
 
 ## Development
