@@ -71,11 +71,8 @@ function test_some_post {
 	echo "[*] Running test: ${FUNCNAME[0]}"
 	#SHOULD="curl -X POST --data 'some_data' -H 'Needed-0: Is-0' ${HOST}/some"
 	SHOULD="curl -X POST -H 'Content-Length: 9' -H 'Needed-0: Is-0' -H 'Needed-1: Is-1' -d some_data ${HOST}/some"
-	echo "SSSSS" $SHOULD
 	out=$(echo "${SHOULD} -H 'User-Agent: NOTNEEDED' -H 'Foo: foo'" \
 		| $EXEC )
-	echo "out iis:::"
-	echo "$out"
 	[[ "${out}" == "${SHOULD}" ]] || (echo "null post test failed......"; exit 1)
 	echo "[*] Test ${FUNCNAME[0]} passed!"
 }
