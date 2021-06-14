@@ -6,7 +6,7 @@ set -o nounset    # Exposes unset variables
 
 export DEBUG=TRUE
 #EXEC="python3 ../http_shrinkwrap/bin.py"
-EXEC="python3 -m http_shrinkwrap.bin"
+EXEC="poetry run python3 -m http_shrinkwrap.bin"
 
 function heise {
 (

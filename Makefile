@@ -3,15 +3,8 @@
 ## env ##
 #########
 
-setup-environ:
-	#sudo apt-get install python3 pip
-	#sudo pip3 install pipenv
-	pipenv install
-	pipenv shell
-
-environ:
-	pipenv shell
-
+env:
+	poetry install
 
 ##########
 ## test ##
@@ -37,7 +30,6 @@ test_internal:
 build:
 	python setup.py sdist bdist_wheel
 
-# test upload
 upload:
 	twine upload -r testpypi dist/*
 

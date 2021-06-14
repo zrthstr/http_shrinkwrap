@@ -8,6 +8,7 @@ dist/*
 .noseids
 build/
 venv/*
+old/*
 
 TODO
 copy_curl.png
