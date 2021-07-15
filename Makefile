@@ -27,6 +27,13 @@ test_internal:
 ## build ##
 ###########
 
+epic:
+	#pip3 install git+https://github.com/zrthstr/http_shrinkwrap.git@main
+	pip3 install git+https://github.com/zrthstr/libgen_torrent_cardiography.git@main
+	#pip3 install -e . --no-binary http_shrinkwrap
+	#pip3 install -e http_shrinkwrap
+	#pip3 install --no-binary http_shrinkwrap==0.1.0 -e .
+
 build:
 	python setup.py sdist bdist_wheel
 
@@ -48,6 +55,7 @@ install_from_tgz:
 
 uninstall:
 	sudo pip3 uninstall -y http-shrinkwrap
+	pip3 uninstall -y http-shrinkwrap
 
 #release: clean bump biild upload # and git push
 
@@ -55,7 +63,8 @@ uninstall:
 ## e2e test ##
 ##############
 
-reinstall: uninstall clean build install_from_tgz test_system_version
+reinstall: uninstall clean build install_from_tgz system_version
+#reinstall: uninstall clean build install_from_pypi_test test_system_version
 
 test_system_version:
 	DEBUG=TRUE echo 'curl https://www.heise.de -H "fff: foo" -H "fofoof: foofofo"'  | http-shrinkwrap

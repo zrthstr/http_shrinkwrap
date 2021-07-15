@@ -77,6 +77,32 @@ function test_some_post {
 	echo "[*] Test ${FUNCNAME[0]} passed!"
 }
 
+function test_cache_304_flag {
+	### GET request. Reply with 304 if If-None-Match or If-Modified-Since present
+	### in this test hsw gets called with the option to bust caches
+	$CMD_FLAGS = "--rm-cache-header"
+
+	echo "[*] Running test: ${FUNCNAME[0]}"
+	SHOULD="curl -X GET -H 'Needed-0: Is-0' ${HOST}/some"
+▷⋅out=$(echo "${SHOULD} -H 'User-Agent: NOTNEEDED' -H 'Needed-0: Is-0'" \
+▷⋅▷⋅| $EXEC $CMD_FLAGS )
+▷⋅[[ "${out}" == "${SHOULD}" ]] || (echo "null post test failed......"; exit 1)
+▷⋅echo "[*] Test ${FUNCNAME[0]} passed!"
+}
+
+
+function test_cache_304 {
+	### GET request. Reply with 304 if If-None-Match or If-Modified-Since present
+	### in this test hsw does NOT called with the option to bust caches
+
+	echo "[*] Running test: ${FUNCNAME[0]}"
+	SHOULD="curl -X GET -H 'Needed-0: Is-0' ${HOST}/some"
+▷⋅out=$(echo "${SHOULD} -H 'User-Agent: NOTNEEDED' -H 'Needed-0: Is-0'" \
+▷⋅▷⋅| $EXEC )
+▷⋅[[ "${out}" == "${SHOULD}" ]] || (echo "null post test failed......"; exit 1)
+▷⋅echo "[*] Test ${FUNCNAME[0]} passed!"
+}
+
 function start_test_server {
 	echo "[*] Starting testing server with timeout: $1"
 	poetry run timeout ${1} ./test/test_server.py & 1>&2
@@ -91,5 +117,7 @@ test_null
 test_random
 test_none
 test_some
+test_cache_304_flag
+test_cache_304
 
 

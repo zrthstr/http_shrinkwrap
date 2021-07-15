@@ -147,14 +147,28 @@ def get_full_and_plain(prep_full, prep_plain):
     plain_status_code, plain_hash = send(prep_plain)
     return full_status_code, full_hash, plain_status_code, plain_hash
 
+def remove_cache_header(req):
+    for header in req.header:
+        print("HH" * 100)
+        print(header)
 
-def process(line):
+def process(line, rm_cache_header):
     global SESSION
     SESSION = Session()
     req = parse(line)
 
     prep_full = SESSION.prepare_request(req)
+
+    if rm_cache_header:
+        prep_full = remove_cache_header(prep_full)
+
+
+    print("prep_full", prep_full.headers)
+
     prep_plain = prepare_plain_request(prep_full)
+
+    exit()
+
     full_status_code, full_hash, plain_status_code, plain_hash = \
             get_full_and_plain(prep_full, prep_plain)
 
@@ -185,10 +199,10 @@ def config_logging():
 
 def is_called_from_vim():
     try:
-        if psutil.Process(os.getppid()).name() in ["vim","vim"]:
-            return true
+        if psutil.Process(os.getppid()).name() in ["vim","vi"]:
+            return True
     except:
-        return false
+        return False
 
 
 def vim_line_merge():
