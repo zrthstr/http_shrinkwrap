@@ -4,7 +4,8 @@ set -e
 set -o pipefail   # Unveils hidden failures
 set -o nounset    # Exposes unset variables
 
-export DEBUG=TRUE
+#export DEBUG=TRUE
+export DEBUG=TRACE
 #EXEC="python3 ../http_shrinkwrap/bin.py"
 EXEC="poetry run python3 -m http_shrinkwrap.bin"
 
