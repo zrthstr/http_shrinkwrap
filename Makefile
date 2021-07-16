@@ -27,7 +27,7 @@ test_internal:
 ## build ##
 ###########
 
-epic:
+install_from_repo:
 	pip3 install -U git+https://github.com/zrthstr/http_shrinkwrap.git@cachebuster-304
 	#pip3 install -e . 
 	#pip3 install -e http_shrinkwrap
