@@ -27,6 +27,12 @@ test_internal:
 ## build ##
 ###########
 
+epic:
+	pip3 install -U git+https://github.com/zrthstr/http_shrinkwrap.git@cachebuster-304
+	#pip3 install -e . 
+	#pip3 install -e http_shrinkwrap
+	#pip3 install --no-binary http_shrinkwrap==0.1.0 -e .
+
 build:
 	python setup.py sdist bdist_wheel
 
@@ -34,7 +40,7 @@ upload:
 	twine upload -r testpypi dist/*
 
 install_from_pypi_test:
-	pip3 install -i https://test.pypi.org/simple/ http-shrinkwrap
+	pip3 install -U -i https://test.pypi.org/simple/ http-shrinkwrap
 #https://test.pypi.org/project/http-shrinkwrap/
 
 bump:
@@ -44,10 +50,12 @@ clean:
 	rm -rf dist build http_shrinkwrap.egg-info http_shrinkwrap/__pycache__
 
 install_from_tgz:
-	sudo pip3 install dist/http_shrinkwrap-0.0.*.tar.gz
+	#sudo pip3 install dist/http_shrinkwrap-0.0.*.tar.gz
+	pip3 install -U dist/http_shrinkwrap-*.tar.gz
 
 uninstall:
 	sudo pip3 uninstall -y http-shrinkwrap
+	pip3 uninstall -y http-shrinkwrap
 
 #release: clean bump biild upload # and git push
 
@@ -56,11 +64,8 @@ uninstall:
 ##############
 
 reinstall: uninstall clean build install_from_tgz test_system_version
+#reinstall: uninstall clean build install_from_pypi_test test_system_version
 
 test_system_version:
 	DEBUG=TRUE echo 'curl https://www.heise.de -H "fff: foo" -H "fofoof: foofofo"'  | http-shrinkwrap
 
-
-#to be removed
-true:
-	echo YESYESYEYSEYS

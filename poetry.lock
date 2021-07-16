@@ -209,7 +209,7 @@ dev = ["pytest (>=4.6.2)", "black (>=19.3b0)"]
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.8"
-content-hash = "098e96532ad450bb63441d07eb3ec41c0cce520e33637548608fce9a4564a560"
+content-hash = "273971c2ebf593b74b673599d7a39d8c1fa7bb3d45c25ef4f387b7edb0f7b780"
 
 [metadata.files]
 certifi = [

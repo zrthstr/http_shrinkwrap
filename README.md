@@ -36,10 +36,13 @@ curl -X GET https://www.heise.de/
 ```
 
 ## Usage
-There are three main ways to run `http_shrinkwrap`
+There are tree main ways to invoke `http_shrinkwrap`
 * By passing a `file` as an argument
 * Via piping a curl command from `stdin`
 * By calling `http_shrinkwrap` from insde `vim` (or `fc`)
+
+Use ```--bust``` to avoid having the web server refer the client back to the cache with a 304 by
+removing the according headrs
 
 ### Via file
 	http_shrinkwrap file_containing_curl_cmd
@@ -87,6 +90,8 @@ given `export EDITOR="vim"`
 
 ### Debugging
 `export DEBUG=TRUE`
+even more info
+`export DEBUG=TRACE`
 
 ### Testing
 	make test

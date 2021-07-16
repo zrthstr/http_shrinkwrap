@@ -20,7 +20,6 @@ import hashlib
 import fileinput
 
 import uncurl
-#import curlify
 
 from requests import Request, Session, structures
 from loguru import logger as log
@@ -34,8 +33,12 @@ def send(seq, log_msg="headers"):
     log.trace(
         f"{log_msg}: {len(seq.headers)}, reply len: {len(resp.text)} status {resp.status_code}"
     )
-    if not resp.status_code == 200:
-        log.error(f"Supplied curl command not exiting with status 200: {resp.status_code}")
+    if resp.status_code == 304:
+        log.error(f"Supplied curl command returned 304.\n"
+                " Consider using the --bust flag to remove the headers that mightbe causing this.")
+        sys.exit(48) # 304 % 256
+    elif not resp.status_code == 200:
+        log.error(f"Supplied curl command did not return status 200: {resp.status_code}")
         sys.exit()
 
     if len(resp.text) == 0:
@@ -110,7 +113,7 @@ def condense(prep_full, full_status_code, full_hash):
         # no change, no test needed
         return prep_full
 
-    # make sure condensing has no side effect
+    # make sure, condensing has no side effect
     new_status, new_hash = send(prep_full, log_msg="condenseing")
 
     if (new_status, new_hash) != (full_status_code, full_hash):
@@ -128,7 +131,7 @@ def check_flapping(full_status_code, full_hash, prep_full ):
 
 
 def ensure_post_content_length_header(prep_plain):
-    # needed to ensure requests fills in correct value
+    # needed to ensure requests fills in the correct value
     if prep_plain.method == "POST":
         prep_plain.headers['Content-Length'] = 0
     return prep_plain
@@ -147,14 +150,26 @@ def get_full_and_plain(prep_full, prep_plain):
     plain_status_code, plain_hash = send(prep_plain)
     return full_status_code, full_hash, plain_status_code, plain_hash
 
+def remove_cache_header(req):
+    log.trace("Looking for cache headers to remove")
+    for header in req.headers:
+        if header.lower() in ["if-modified-since", "if-none-match", "if-match", "if-unmodified-since"]:
+            log.debug(f"Removing cache header: {req.headers[header]}")
+            del(req.headers[header])
+    return req
 
-def process(line):
+def process(line, rm_cache_header):
     global SESSION
     SESSION = Session()
     req = parse(line)
 
     prep_full = SESSION.prepare_request(req)
+
+    if rm_cache_header:
+        prep_full = remove_cache_header(prep_full)
+
     prep_plain = prepare_plain_request(prep_full)
+
     full_status_code, full_hash, plain_status_code, plain_hash = \
             get_full_and_plain(prep_full, prep_plain)
 
@@ -177,6 +192,8 @@ def config_logging():
     log.remove()
     if os.environ.get('DEBUG') == "TRUE":
         log.add(sys.stderr, level="DEBUG")
+    elif os.environ.get('DEBUG') == "TRACE":
+        log.add(sys.stderr, level="TRACE")
     elif is_called_from_vim():
         log.add(sys.stderr, level="ERROR")
     else:
@@ -185,10 +202,10 @@ def config_logging():
 
 def is_called_from_vim():
     try:
-        if psutil.Process(os.getppid()).name() in ["vim","vim"]:
-            return true
+        if psutil.Process(os.getppid()).name() in ["vim","vi"]:
+            return True
     except:
-        return false
+        return False
 
 
 def vim_line_merge():
