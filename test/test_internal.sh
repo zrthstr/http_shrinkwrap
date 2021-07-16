@@ -104,7 +104,7 @@ function test_cache_304 {
 function start_test_server {
 	echo "[*] Starting testing server with timeout: $1"
 	poetry run timeout ${1} ./test/test_server.py & 1>&2
-	sleep 0.5
+	sleep 1
 }
 
 
