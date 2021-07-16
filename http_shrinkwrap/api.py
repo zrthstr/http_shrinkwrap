@@ -34,8 +34,12 @@ def send(seq, log_msg="headers"):
     log.trace(
         f"{log_msg}: {len(seq.headers)}, reply len: {len(resp.text)} status {resp.status_code}"
     )
-    if not resp.status_code == 200:
-        log.error(f"Supplied curl command not exiting with status 200: {resp.status_code}")
+    if resp.status_code == 304:
+        log.warning(f"Supplied curl command returned 304.\n"
+                " Consider using the --bust flag to remove the headers that mightbe causing this.")
+        sys.exit(48) # 304 % 256
+    elif not resp.status_code == 200:
+        log.error(f"Supplied curl command did not return status 200: {resp.status_code}")
         sys.exit()
 
     if len(resp.text) == 0:
@@ -110,7 +114,7 @@ def condense(prep_full, full_status_code, full_hash):
         # no change, no test needed
         return prep_full
 
-    # make sure condensing has no side effect
+    # make sure, condensing has no side effect
     new_status, new_hash = send(prep_full, log_msg="condenseing")
 
     if (new_status, new_hash) != (full_status_code, full_hash):
@@ -128,7 +132,7 @@ def check_flapping(full_status_code, full_hash, prep_full ):
 
 
 def ensure_post_content_length_header(prep_plain):
-    # needed to ensure requests fills in correct value
+    # needed to ensure requests fills in the correct value
     if prep_plain.method == "POST":
         prep_plain.headers['Content-Length'] = 0
     return prep_plain
@@ -148,9 +152,12 @@ def get_full_and_plain(prep_full, prep_plain):
     return full_status_code, full_hash, plain_status_code, plain_hash
 
 def remove_cache_header(req):
-    for header in req.header:
-        print("HH" * 100)
-        print(header)
+    #print(req.headers)
+    #exit()
+    for header in req.headers:
+        if header in ["If-Modified-Since", "If-None-Match", "If-Match", "If-Unmodified-Since"]:
+            del(req.headers[header])
+    return req
 
 def process(line, rm_cache_header):
     global SESSION
@@ -162,12 +169,7 @@ def process(line, rm_cache_header):
     if rm_cache_header:
         prep_full = remove_cache_header(prep_full)
 
-
-    print("prep_full", prep_full.headers)
-
     prep_plain = prepare_plain_request(prep_full)
-
-    exit()
 
     full_status_code, full_hash, plain_status_code, plain_hash = \
             get_full_and_plain(prep_full, prep_plain)

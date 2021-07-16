@@ -68,6 +68,9 @@ def post_some():
 def get_304():
     ''' if cache headers present, reply with 304'''
     headers = ['if-Modified-Since', 'If-Unmodified-since', 'If-Match', 'If-None-Match']
+    if not 'Needed-0' in request.headers:
+        return 'BAD'
+
     for h in headers:
         if h in request.headers:
             return "", 304

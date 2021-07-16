@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "http_shrinkwrap"
-version = "0.1.0"
+version = "0.0.8"
 description = ""
 authors = ["zrthstr <zrth1k@gmail.com>"]
 license = "Apache License 2.0"
@@ -13,11 +13,12 @@ requests = "^2.25.1"
 uncurl = "^0.0.11"
 curlify = "^2.2.1"
 psutil = "^5.8.0"
-setuptools = "^57.2.0"
 
 [tool.poetry.dev-dependencies]
 Flask = "1.1.4"
+setuptools = "^57.2.0"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
 build-backend = "poetry.core.masonry.api"
+setuptools = "^57.2.0"

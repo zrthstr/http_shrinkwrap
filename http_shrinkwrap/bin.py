@@ -15,7 +15,6 @@ def main():
         if "--bust" in sys.argv:
             sys.argv.remove("--bust")
             rm_cache_header = True
-            print("DEBUG:rm_cache_header:", rm_cache_header)
 
     if len(sys.argv) > 1 or is_called_from_vim():
         curl_line = vim_line_merge()
