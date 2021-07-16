@@ -81,17 +81,10 @@ function test_cache_304_flag {
 	### GET request. Reply with 304 if If-None-Match or If-Modified-Since present
 	### in this test hsw gets called with the option to bust caches
 	CMD_FLAGS="--bust"
-
 	echo "[*] Running test: ${FUNCNAME[0]}"
 	SHOULD="curl -X GET -H 'Needed-0: Is-0' ${HOST}/get_304"
 	out=$(echo "${SHOULD} -H 'User-Agent: NOTNEEDED'" \
 		| $EXEC $CMD_FLAGS )
-
-	echo Debug
-	echo $SHOULD
-	echo $out
-	echo Debug end
-
 	[[ "${out}" == "${SHOULD}" ]] || (echo "${FUNCNAME[0]} failed......"; exit 1)
 	echo "[*] Test ${FUNCNAME[0]} passed!"
 }
@@ -100,7 +93,6 @@ function test_cache_304 {
 	### GET request. Reply with 304 if If-None-Match or If-Modified-Since present
 	### in this test hsw is NOT called with the command line option to bust caches
 	### the server respods with 304
-
 	echo "[*] Running test: ${FUNCNAME[0]}"
 	RET_SHOULD="48"
 	echo "curl -H 'User-Agent: NOTNEEDED' -H 'Needed-0: Is-0' -H 'If-None-Match: 33a64df5' ${HOST}/get_304" \
@@ -121,7 +113,7 @@ test_useragent
 test_null
 test_some_post
 test_random
-test_none
-test_some
 test_cache_304_flag
 test_cache_304
+test_none
+test_some

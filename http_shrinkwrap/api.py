@@ -20,7 +20,6 @@ import hashlib
 import fileinput
 
 import uncurl
-#import curlify
 
 from requests import Request, Session, structures
 from loguru import logger as log
@@ -35,7 +34,7 @@ def send(seq, log_msg="headers"):
         f"{log_msg}: {len(seq.headers)}, reply len: {len(resp.text)} status {resp.status_code}"
     )
     if resp.status_code == 304:
-        log.warning(f"Supplied curl command returned 304.\n"
+        log.error(f"Supplied curl command returned 304.\n"
                 " Consider using the --bust flag to remove the headers that mightbe causing this.")
         sys.exit(48) # 304 % 256
     elif not resp.status_code == 200:
@@ -152,10 +151,10 @@ def get_full_and_plain(prep_full, prep_plain):
     return full_status_code, full_hash, plain_status_code, plain_hash
 
 def remove_cache_header(req):
-    #print(req.headers)
-    #exit()
+    log.trace("Looking for cache headers to remove")
     for header in req.headers:
-        if header in ["If-Modified-Since", "If-None-Match", "If-Match", "If-Unmodified-Since"]:
+        if header.lower() in ["if-modified-since", "if-none-match", "if-match", "if-unmodified-since"]:
+            log.debug(f"Removing cache header: {req.headers[header]}")
             del(req.headers[header])
     return req
 
@@ -193,6 +192,8 @@ def config_logging():
     log.remove()
     if os.environ.get('DEBUG') == "TRUE":
         log.add(sys.stderr, level="DEBUG")
+    elif os.environ.get('DEBUG') == "TRACE":
+        log.add(sys.stderr, level="TRACE")
     elif is_called_from_vim():
         log.add(sys.stderr, level="ERROR")
     else:
