@@ -54,5 +54,5 @@ EOF
 }
 
 
-heise
+heise || heise
 ipinfo
