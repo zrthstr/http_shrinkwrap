@@ -9,7 +9,7 @@ EXEC="poetry run python3 -m http_shrinkwrap.bin"
 
 HOST="http://127.0.0.1:8000"
 TIMEOUT=12
-export DEBUG=TRUE
+export DEBUG=TRACE
 
 
 function test_some {
