@@ -42,7 +42,7 @@ There are tree main ways to invoke http_shrinkwrap `hsw`
 * By calling `hsw` from insde `vim` (or `fc`)
 
 Use ```--bust``` to avoid having the web server refer the client back to the cache with a 304 by
-removing the according headrs
+removing the according headers
 
 ### Via file
 	hsw file_containing_curl_cmd
