@@ -33,15 +33,20 @@ install_from_repo:
 	#pip3 install -e http_shrinkwrap
 	#pip3 install --no-binary http_shrinkwrap==0.1.0 -e .
 
-build:
-	python setup.py sdist bdist_wheel
-
-upload:
-	twine upload -r testpypi dist/*
-
 install_from_pypi_test:
 	pip3 install -U -i https://test.pypi.org/simple/ http-shrinkwrap
 #https://test.pypi.org/project/http-shrinkwrap/
+
+install_from_tgz:
+	#sudo pip3 install dist/http_shrinkwrap-0.0.*.tar.gz
+	pip3 install -U dist/http_shrinkwrap-*.tar.gz
+
+
+build:
+	poetry build
+
+publish:
+	poetry publish -r testpypi
 
 bump:
 	bumpversion --config-file .bumpversion.cfg patch
@@ -49,13 +54,10 @@ bump:
 clean:
 	rm -rf dist build http_shrinkwrap.egg-info http_shrinkwrap/__pycache__
 
-install_from_tgz:
-	#sudo pip3 install dist/http_shrinkwrap-0.0.*.tar.gz
-	pip3 install -U dist/http_shrinkwrap-*.tar.gz
-
 uninstall:
 	sudo pip3 uninstall -y http-shrinkwrap
 	pip3 uninstall -y http-shrinkwrap
+
 
 #release: clean bump biild upload # and git push
 

@@ -1,9 +1,27 @@
 [tool.poetry]
 name = "http_shrinkwrap"
 version = "0.0.9"
-description = ""
+description = "A command line tool to minimize curl http requests."
 authors = ["zrthstr <zrth1k@gmail.com>"]
 license = "Apache License 2.0"
+include = ["LICENSE"]
+exclude = ["test", "doc", "TODO"]
+homepage = "https://github.com/zrthstr/http_shrinkwrap"
+repository = "https://github.com/zrthstr/http_shrinkwrap"
+keywords='curl pentest http cli poc',
+readme = 'README.md'
+classifiers=[
+    'Intended Audience :: Developers',
+    'Intended Audience :: System Administrators',
+    'Operating System :: POSIX',
+    'Programming Language :: Python :: 3',
+    'Topic :: Internet',
+    'Topic :: Security',
+    'Topic :: Internet :: WWW/HTTP',
+    'Topic :: Internet :: WWW/HTTP :: Browsers',
+    'Topic :: System :: Networking',
+    'Topic :: Utilities',
+]
 
 [tool.poetry.dependencies]
 #python = "^3.9"
@@ -17,6 +35,9 @@ psutil = "^5.8.0"
 [tool.poetry.dev-dependencies]
 Flask = "1.1.4"
 setuptools = "^57.2.0"
+
+[tool.poetry.scripts]
+hsw = "http_shrinkwrap.bin:main"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
