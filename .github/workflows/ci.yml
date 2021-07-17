@@ -18,16 +18,28 @@ jobs:
       - uses: actions/setup-python@v2
         with:
           python-version: ${{ matrix.python-version }}
+
       - name: Run image
         uses: abatilo/actions-poetry@v2.0.0
         with:
           poetry-version: ${{ matrix.poetry-version }}
       - name: make env - run poetry
         run: make env
+
       - name: Install coreutils for macOS
         if: matrix.os == 'macos-latest'
         run: brew install coreutils
+
       - name: make test internal
         run: make test_internal
+
       - name: make test external
         run: make test_external
+
+
+#       - name: Publish to PyPI
+#         env:
+#           POETRY_PYPI_TOKEN_PYPI: ${{ secrets.PYPI_TOKEN }}
+#         run: |
+#         source $HOME/.poetry/env
+#         make publish

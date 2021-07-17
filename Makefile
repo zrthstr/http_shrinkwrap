@@ -1,10 +1,10 @@
-
 #########
 ## env ##
 #########
 
 env:
 	poetry install
+
 
 ##########
 ## test ##
@@ -13,19 +13,23 @@ env:
 test: test_external test_internal
 
 test_external:
-	#cd test && ./test_external.sh
-	#cd http_shrinkwrap && ../test/test_external.sh
 	./test/test_external.sh
 
 test_internal:
-	#cd test && ./test_internal.sh
-	#cd http_shrinkwrap && ../test/test_internal.sh
 	./test/test_internal.sh
 
 
-###########
-## build ##
-###########
+#########
+## dev ##
+#########
+
+publish-testing:
+	poetry publish -r https://test.pypi.org/legacy/
+
+build_config:
+	poetry config repositories.testpypi https://test.pypi.org/legacy/Q
+	# see https://blog.frank-mich.com/python-poetry-1-0-0-private-repo-issue-fix/?utm_source=pocket_mylist
+	# poetry config pypi-token.pypi my-SECRET-token
 
 install_from_repo:
 	pip3 install -U git+https://github.com/zrthstr/http_shrinkwrap.git@cachebuster-304
@@ -42,11 +46,18 @@ install_from_tgz:
 	pip3 install -U dist/http_shrinkwrap-*.tar.gz
 
 
+
+###########
+## build ##
+###########
+
+
+
 build:
 	poetry build
 
-publish:
-	poetry publish -r testpypi
+publish-prod:
+	poetry publish
 
 bump:
 	bumpversion --config-file .bumpversion.cfg patch

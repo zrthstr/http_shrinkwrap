@@ -8,7 +8,7 @@ include = ["LICENSE"]
 exclude = ["test", "doc", "TODO"]
 homepage = "https://github.com/zrthstr/http_shrinkwrap"
 repository = "https://github.com/zrthstr/http_shrinkwrap"
-keywords='curl pentest http cli poc',
+keywords=['curl', 'pentest', 'http', 'cli', 'poc']
 readme = 'README.md'
 classifiers=[
     'Intended Audience :: Developers',
