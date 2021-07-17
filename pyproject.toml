@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "http_shrinkwrap"
-version = "0.0.8"
+version = "0.0.9"
 description = ""
 authors = ["zrthstr <zrth1k@gmail.com>"]
 license = "Apache License 2.0"
