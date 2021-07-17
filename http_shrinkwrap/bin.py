@@ -23,6 +23,9 @@ def main():
 
     log.debug(f"Processing curl: {curl_line}")
 
+    if curl_line == "\n":
+        log.error("Received empty line. Exiting.")
+        sys.exit()
 
     request_obj = process(curl_line, rm_cache_header)
     print(curlify.to_curl(request_obj))
