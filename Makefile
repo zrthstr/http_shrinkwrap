@@ -67,5 +67,5 @@ reinstall: uninstall clean build install_from_tgz test_system_version
 #reinstall: uninstall clean build install_from_pypi_test test_system_version
 
 test_system_version:
-	DEBUG=TRUE echo 'curl https://www.heise.de -H "fff: foo" -H "fofoof: foofofo"'  | http-shrinkwrap
+	DEBUG=TRUE echo 'curl https://www.heise.de -H "fff: foo" -H "fofoof: foofofo"'  | hsw
 

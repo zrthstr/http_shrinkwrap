@@ -34,7 +34,7 @@ setup(
         ],
     entry_points={
         'console_scripts': [
-            'http-shrinkwrap = http_shrinkwrap.bin:main',
+            'hsw = http_shrinkwrap.bin:main',
         ],
     },
     install_requires=requirements,

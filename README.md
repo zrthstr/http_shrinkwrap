@@ -36,26 +36,26 @@ curl -X GET https://www.heise.de/
 ```
 
 ## Usage
-There are tree main ways to invoke `http_shrinkwrap`
+There are tree main ways to invoke http_shrinkwrap `hsw`
 * By passing a `file` as an argument
 * Via piping a curl command from `stdin`
-* By calling `http_shrinkwrap` from insde `vim` (or `fc`)
+* By calling `hsw` from insde `vim` (or `fc`)
 
 Use ```--bust``` to avoid having the web server refer the client back to the cache with a 304 by
 removing the according headrs
 
 ### Via file
-	http_shrinkwrap file_containing_curl_cmd
+	hsw file_containing_curl_cmd
 
 eg:
 * in Chrome/Mozilla dev tools > "copy request as curl" & paste to some_file
-* `http-shrinkwrap some_file`
+* `hsw some_file`
 
 ### Via stdin
-pipe curl command to `http-shrinkwrap`
+pipe curl command to `hsw`
 eg:
 * in Chrome/Mozilla dev tools > "copy request as curl"
-* `echo "curl http://foo.com -H 'some thing'" | http-shrinkwrap`
+* `echo "curl http://foo.com -H 'some thing'" | hsw`
 
 Note:
 * wrap the curl command in double quotes
@@ -68,7 +68,7 @@ given `export EDITOR="vim"`
 * in Chrome/Mozilla dev tools > "copy request as curl"
 * paste and execute curl command in terminal
 * run `fc`
-* now inside vim run `:%! http-shrinkwrap`
+* now inside vim run `:%! hsw`
 * then save output if needed `:w outfile_name`
 
 
