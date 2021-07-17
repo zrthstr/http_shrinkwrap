@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "http_shrinkwrap"
-version = "0.0.9"
+version = "0.1.0"
 description = "A command line tool to minimize curl http requests."
 authors = ["zrthstr <zrth1k@gmail.com>"]
 license = "Apache License 2.0"

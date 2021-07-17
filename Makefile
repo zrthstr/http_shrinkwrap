@@ -31,12 +31,6 @@ build_config:
 	# see https://blog.frank-mich.com/python-poetry-1-0-0-private-repo-issue-fix/?utm_source=pocket_mylist
 	# poetry config pypi-token.pypi my-SECRET-token
 
-install_from_repo:
-	pip3 install -U git+https://github.com/zrthstr/http_shrinkwrap.git@cachebuster-304
-	#pip3 install -e . 
-	#pip3 install -e http_shrinkwrap
-	#pip3 install --no-binary http_shrinkwrap==0.1.0 -e .
-
 install_from_pypi_test:
 	pip3 install -U -i https://test.pypi.org/simple/ http-shrinkwrap
 #https://test.pypi.org/project/http-shrinkwrap/
@@ -46,17 +40,14 @@ install_from_tgz:
 	pip3 install -U dist/http_shrinkwrap-*.tar.gz
 
 
-
 ###########
 ## build ##
 ###########
 
-
-
 build:
 	poetry build
 
-publish-prod:
+publish-prod: build
 	poetry publish
 
 bump:
